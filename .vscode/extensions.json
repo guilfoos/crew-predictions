@@ -1,8 +1,13 @@
 {
   "recommendations": [
     "golang.go",
-    "a-h.templ",
+    "vue.volar",
     "ms-playwright.playwright",
-    "cucumberopen.cucumber-official"
+    "cucumberopen.cucumber-official",
+    "bierner.markdown-mermaid",
+    "github.vscode-github-actions",
+    "redhat.vscode-yaml",
+    "docker.docker",
+    "googlecloudtools.cloudcode"
   ]
 }

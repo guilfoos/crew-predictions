@@ -191,6 +191,46 @@ func TestMatchPoller_ScheduleSkipsAlreadyScheduled(t *testing.T) {
 	}
 }
 
+func TestMatchPoller_Tick_EnrichesAttendanceLogosAndRefereeFromSummary(t *testing.T) {
+	// Covers the per-field summary enrichment branches in Tick: Attendance,
+	// HomeLogo, AwayLogo, Referee. Existing tests only populate Events.
+	matchStore := repository.NewMemoryMatchStore()
+	scoreboardMatch := models.Match{
+		ID: "m-rich", HomeTeam: "Crew", AwayTeam: "FC Dallas",
+		Kickoff: time.Now().Add(-30 * time.Minute), State: "in", Status: "STATUS_IN_PROGRESS",
+	}
+	matchStore.Seed([]models.Match{scoreboardMatch})
+	scoreboardFetcher := func() ([]models.Match, error) { return []models.Match{scoreboardMatch}, nil }
+	summaryFetcher := func(_ string) (models.MatchSummary, error) {
+		return models.MatchSummary{
+			Attendance: 21657,
+			HomeLogo:   "https://espncdn.com/i/teamlogos/soccer/500/9723.png",
+			AwayLogo:   "https://espncdn.com/i/teamlogos/soccer/500/152.png",
+			Referee:    "Ted Unkel",
+		}, nil
+	}
+
+	p := poll.NewMatchPoller(matchStore, repository.NewMemoryResultStore(), scoreboardFetcher, immediateTimer)
+	p.SetSummaryFetcher(summaryFetcher)
+	p.Schedule([]models.Match{scoreboardMatch})
+	p.Tick(context.Background())
+
+	stored, _ := matchStore.GetAll()
+	if len(stored) != 1 {
+		t.Fatalf("expected 1 match in store, got %d", len(stored))
+	}
+	got := stored[0]
+	if got.Attendance != 21657 {
+		t.Errorf("Attendance: got %d, want 21657", got.Attendance)
+	}
+	if got.HomeLogo == "" || got.AwayLogo == "" {
+		t.Errorf("logos not enriched: home=%q away=%q", got.HomeLogo, got.AwayLogo)
+	}
+	if got.Referee != "Ted Unkel" {
+		t.Errorf("Referee: got %q, want %q", got.Referee, "Ted Unkel")
+	}
+}
+
 func TestMatchPoller_Tick_NoopWhenNoActiveMatches(t *testing.T) {
 	calls := 0
 	matchStore := repository.NewMemoryMatchStore()

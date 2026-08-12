@@ -20,7 +20,7 @@ jobs:
     # @playwright/test version pinned in package.json — bump both
     # together when upgrading Playwright.
     container:
-      image: mcr.microsoft.com/playwright:v1.59.1-noble
+      image: mcr.microsoft.com/playwright:v1.60.0-noble
       options: --user 1001
     env:
       # Belt-and-suspenders alongside the 127.0.0.1 emulator hosts below.
@@ -336,7 +336,7 @@ jobs:
     # Same container approach as build-and-test — chromium + system libs
     # preinstalled. Image tag must match @playwright/test in package.json.
     container:
-      image: mcr.microsoft.com/playwright:v1.59.1-noble
+      image: mcr.microsoft.com/playwright:v1.60.0-noble
       options: --user 1001
     permissions:
       checks: write
@@ -518,7 +518,7 @@ jobs:
     # Same container approach as build-and-test — chromium + system libs
     # preinstalled. Image tag must match @playwright/test in package.json.
     container:
-      image: mcr.microsoft.com/playwright:v1.59.1-noble
+      image: mcr.microsoft.com/playwright:v1.60.0-noble
       options: --user 1001
     permissions:
       checks: write

@@ -226,3 +226,144 @@ func TestPollScoresHandler_NoBailoutWithin4h(t *testing.T) {
 		}
 	}
 }
+
+// errEnqueuer always fails on EnqueuePoll. Used to exercise the chain
+// continuation error-logging branches without hitting real Cloud Tasks.
+type errEnqueuer struct{}
+
+func (errEnqueuer) EnqueuePoll(_ context.Context, _ string, _ time.Time) error {
+	return fmt.Errorf("simulated enqueue failure")
+}
+
+// errGetAllMatchStore wraps a MatchStore and returns an error from GetAll
+// after the first call, so PollOnce can succeed but maybeEnqueueNext's
+// follow-up read fails.
+type errGetAllMatchStore struct {
+	repository.MatchStore
+	calls int
+}
+
+func (e *errGetAllMatchStore) GetAll() ([]models.Match, error) {
+	e.calls++
+	if e.calls > 1 {
+		return nil, fmt.Errorf("simulated GetAll failure")
+	}
+	return e.MatchStore.GetAll()
+}
+
+func TestPollScoresHandler_ChainEnqueueErrorIsLoggedAndSwallowed(t *testing.T) {
+	matchStore := repository.NewMemoryMatchStore()
+	matchStore.Seed([]models.Match{{
+		ID: "m-live", HomeTeam: "Columbus Crew", AwayTeam: "LAFC",
+		Kickoff: time.Now().Add(-30 * time.Minute), Status: "STATUS_IN_PROGRESS", State: "in",
+	}})
+	fetcher := func() ([]models.Match, error) { return matchStore.GetAll() }
+
+	h := handlers.NewPollScoresHandler(matchStore, repository.NewMemoryResultStore(), fetcher, func(_ context.Context) {}).
+		WithEnqueuer(errEnqueuer{})
+
+	req := httptest.NewRequest(http.MethodPost, "/admin/poll-scores?matchID=m-live", http.NoBody)
+	w := httptest.NewRecorder()
+	h.Poll(w, req)
+
+	// Handler must still respond 204 — chain enqueue failure is best-effort,
+	// not a 500 (the poll itself succeeded).
+	if w.Code != http.StatusNoContent {
+		t.Errorf("expected 204 even when chain enqueue fails, got %d", w.Code)
+	}
+}
+
+func TestPollScoresHandler_ChainContinuationSkipsNonMatchingMatches(t *testing.T) {
+	// When multiple matches exist in the store, maybeEnqueueNext must iterate
+	// past non-matching IDs until it finds the queried one. Covers the
+	// `if m.ID != matchID { continue }` branch.
+	matchStore := repository.NewMemoryMatchStore()
+	matchStore.Seed([]models.Match{
+		{ID: "m-other", HomeTeam: "Crew", AwayTeam: "RBNY", Kickoff: time.Now(), Status: "STATUS_FULL_TIME", State: "post"},
+		{ID: "m-target", HomeTeam: "Crew", AwayTeam: "LAFC", Kickoff: time.Now().Add(-30 * time.Minute), Status: "STATUS_IN_PROGRESS", State: "in"},
+	})
+	fetcher := func() ([]models.Match, error) { return matchStore.GetAll() }
+	enqueuer := tasks.NewFakeEnqueuer()
+
+	h := handlers.NewPollScoresHandler(matchStore, repository.NewMemoryResultStore(), fetcher, func(_ context.Context) {}).
+		WithEnqueuer(enqueuer)
+
+	req := httptest.NewRequest(http.MethodPost, "/admin/poll-scores?matchID=m-target", http.NoBody)
+	w := httptest.NewRecorder()
+	h.Poll(w, req)
+
+	calls := enqueuer.Calls()
+	if len(calls) != 1 || calls[0].MatchID != "m-target" {
+		t.Errorf("expected single enqueue for m-target, got %+v", calls)
+	}
+}
+
+// errSaveAllMatchStore wraps a MatchStore and fails SaveAll only after the
+// initial PollOnce save succeeds. This lets the chain bailout path's
+// AbandonedAt persist call hit the error branch.
+type errSaveAllMatchStore struct {
+	repository.MatchStore
+	saves int
+}
+
+func (e *errSaveAllMatchStore) SaveAll(m []models.Match) error {
+	e.saves++
+	if e.saves > 1 {
+		return fmt.Errorf("simulated SaveAll failure")
+	}
+	return e.MatchStore.SaveAll(m)
+}
+
+func TestPollScoresHandler_BailoutSavePersistFailureIsLogged(t *testing.T) {
+	// A 5h-old in-progress match triggers the safety bailout; if persisting
+	// AbandonedAt back to the store fails, the handler logs and still 204s.
+	inner := repository.NewMemoryMatchStore()
+	inner.Seed([]models.Match{{
+		ID: "m-abandoned", HomeTeam: "Columbus Crew", AwayTeam: "LAFC",
+		Kickoff: time.Now().Add(-5 * time.Hour), Status: "STATUS_IN_PROGRESS", State: "in",
+	}})
+	matchStore := &errSaveAllMatchStore{MatchStore: inner}
+	fetcher := func() ([]models.Match, error) { return inner.GetAll() }
+	enqueuer := tasks.NewFakeEnqueuer()
+
+	h := handlers.NewPollScoresHandler(matchStore, repository.NewMemoryResultStore(), fetcher, func(_ context.Context) {}).
+		WithEnqueuer(enqueuer)
+
+	req := httptest.NewRequest(http.MethodPost, "/admin/poll-scores?matchID=m-abandoned", http.NoBody)
+	w := httptest.NewRecorder()
+	h.Poll(w, req)
+
+	if w.Code != http.StatusNoContent {
+		t.Errorf("expected 204 when bailout persist fails, got %d", w.Code)
+	}
+	if got := len(enqueuer.Calls()); got != 0 {
+		t.Errorf("bailout path must not enqueue, got %d enqueues", got)
+	}
+}
+
+func TestPollScoresHandler_ChainReadErrorIsLoggedAndSwallowed(t *testing.T) {
+	inner := repository.NewMemoryMatchStore()
+	inner.Seed([]models.Match{{
+		ID: "m-live", HomeTeam: "Columbus Crew", AwayTeam: "LAFC",
+		Kickoff: time.Now().Add(-30 * time.Minute), Status: "STATUS_IN_PROGRESS", State: "in",
+	}})
+	matchStore := &errGetAllMatchStore{MatchStore: inner}
+	// fetcher uses the inner store directly so PollOnce succeeds; the wrapped
+	// store's GetAll fails only on maybeEnqueueNext's later call.
+	fetcher := func() ([]models.Match, error) { return inner.GetAll() }
+	enqueuer := tasks.NewFakeEnqueuer()
+
+	h := handlers.NewPollScoresHandler(matchStore, repository.NewMemoryResultStore(), fetcher, func(_ context.Context) {}).
+		WithEnqueuer(enqueuer)
+
+	req := httptest.NewRequest(http.MethodPost, "/admin/poll-scores?matchID=m-live", http.NoBody)
+	w := httptest.NewRecorder()
+	h.Poll(w, req)
+
+	if w.Code != http.StatusNoContent {
+		t.Errorf("expected 204 even when chain read fails, got %d", w.Code)
+	}
+	if got := len(enqueuer.Calls()); got != 0 {
+		t.Errorf("expected 0 enqueues when chain read fails, got %d", got)
+	}
+}

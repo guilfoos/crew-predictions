@@ -126,6 +126,17 @@ func TestTwoOneBot_SkipsMatchOnGetByMatchAndUserError(t *testing.T) {
 	}
 }
 
+func TestTwoOneBot_LogsErrorWhenSaveFails(t *testing.T) {
+	// ErrorPredictionStore returns nil from GetByMatchAndUser (no existing
+	// prediction, so the bot tries to save) and errors on Save. The bot must
+	// log and proceed without panicking.
+	ctx := context.Background()
+	preds := repository.NewErrorPredictionStore()
+	b := bot.New(preds, repository.NewMemoryUserStore(), "Columbus Crew")
+
+	b.Predict(ctx, []models.Match{upcoming("m-save-err", "Columbus Crew", "FC Dallas")})
+}
+
 func TestTwoOneBot_LogsErrorOnUpsertFailure(t *testing.T) {
 	ctx := context.Background()
 	preds := repository.NewMemoryPredictionStore()

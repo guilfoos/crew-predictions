@@ -1,6 +1,7 @@
 package handlers_test
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -228,6 +229,64 @@ func TestRefreshMatchesHandler_SkipsTerminalAndFarFutureMatches(t *testing.T) {
 
 	if got := len(enqueuer.Calls()); got != 0 {
 		t.Errorf("far-future + terminal: expected 0 enqueues, got %d", got)
+	}
+}
+
+type errEnqueuerRefresh struct{}
+
+func (errEnqueuerRefresh) EnqueuePoll(_ context.Context, _ string, _ time.Time) error {
+	return fmt.Errorf("simulated enqueue failure")
+}
+
+func TestRefreshMatchesHandler_EnqueueErrorIsLoggedAndDoesNotFailRefresh(t *testing.T) {
+	// Refresh must still return 204 + persist matches when the enqueuer errors —
+	// chain seeding is best-effort. The next refresh will retry.
+	kickoff := time.Now().Add(2 * time.Hour).UTC()
+	matches := []models.Match{
+		{ID: "m-soon", HomeTeam: "Columbus Crew", AwayTeam: "LAFC", Kickoff: kickoff, Status: "STATUS_SCHEDULED", State: "pre"},
+	}
+	store := repository.NewMemoryMatchStore()
+	fetcher := func() ([]models.Match, error) { return matches, nil }
+
+	h := handlers.NewRefreshMatchesHandler(store, fetcher, nil).WithEnqueuer(errEnqueuerRefresh{})
+	req := httptest.NewRequest(http.MethodPost, "/admin/refresh-matches", http.NoBody)
+	w := httptest.NewRecorder()
+	h.Refresh(w, req)
+
+	if w.Code != http.StatusNoContent {
+		t.Errorf("expected 204 even when enqueue fails, got %d", w.Code)
+	}
+	stored, _ := store.GetAll()
+	if len(stored) != 1 || stored[0].ID != "m-soon" {
+		t.Errorf("expected match still persisted, got %+v", stored)
+	}
+}
+
+type errGetAllRefreshStore struct {
+	repository.MatchStore
+}
+
+func (e *errGetAllRefreshStore) GetAll() ([]models.Match, error) {
+	return nil, fmt.Errorf("simulated GetAll failure")
+}
+
+func TestRefreshMatchesHandler_SoftFailsOnExistingReadError(t *testing.T) {
+	// mergeChainFields swallows the GetAll error and proceeds with fresh-only.
+	// Refresh still 204s and persists; LastPollAt/ChainSeededFor reset is the
+	// accepted worst case (idempotent at the poll layer).
+	store := &errGetAllRefreshStore{MatchStore: repository.NewMemoryMatchStore()}
+	matches := []models.Match{
+		{ID: "m-x", HomeTeam: "Columbus Crew", AwayTeam: "LAFC", Kickoff: time.Now()},
+	}
+	fetcher := func() ([]models.Match, error) { return matches, nil }
+
+	h := handlers.NewRefreshMatchesHandler(store, fetcher, nil)
+	req := httptest.NewRequest(http.MethodPost, "/admin/refresh-matches", http.NoBody)
+	w := httptest.NewRecorder()
+	h.Refresh(w, req)
+
+	if w.Code != http.StatusNoContent {
+		t.Errorf("expected 204 on soft-fail merge, got %d", w.Code)
 	}
 }
 

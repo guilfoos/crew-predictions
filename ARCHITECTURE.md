@@ -264,35 +264,44 @@ flowchart TD
     subgraph DS["deploy-staging job"]
         direction TB
         DL["Download artifacts"]
-        DCR["Docker build → Artifact Registry\n(crew-predictions project, shared)"]
-        CRS["Cloud Run deploy\ncrew-predictions-staging / us-east5"]
+        DCR["Docker build → push :sha-<sha> + :latest\n(Artifact Registry, crew-predictions project)"]
+        CRS["Cloud Run deploy :sha-<sha>\ncrew-predictions-staging / us-east5"]
         FHS["Firebase Hosting deploy\ncrew-predictions-staging.web.app"]
-        GCS["Frontend artifact → GCS\n(retained 90 days)"]
+        GCS["Frontend dist → GCS\nsha-<sha>.zip + latest.zip"]
         SS["smoke-staging\n13 @smoke scenarios"]
         DL --> DCR --> CRS --> FHS --> GCS --> SS
     end
 
-    SS -- "smoke passed → apply :prod tag" --> AR[("Artifact Registry\n:prod tag = last known good")]
-
-    PM[push to main] --> DP
+    PM[push to main\nmerge commit] --> DP
 
     subgraph DP["deploy-prod job"]
         direction TB
-        PR["Promote :prod Docker image\n(no rebuild)"]
+        SV["Save :prod → :prod-previous\nprod.zip → prod-previous.zip"]
+        RES["Resolve image:\nparents[1] of merge commit = develop-tip SHA\ntags list → confirm :sha-<develop-tip>\nfallback: :latest"]
+        RESZ["Resolve frontend:\ntry sha-<develop-tip>.zip\nfallback: latest.zip"]
         CRP["Cloud Run deploy\ncrew-predictions / us-east5"]
-        FHP["Firebase Hosting deploy\ncrew-predictions.web.app"]
-        SP["smoke-prod\n8 @smoke scenarios"]
-        RB["auto-rollback on failure"]
-        PR --> CRP --> FHP --> SP
-        SP -- "failure" --> RB
+        FHP["Firebase Hosting + Firestore rules"]
+        TAG["Tag deployed image as :prod\ncopy frontend → prod.zip"]
+        RB["Rollback on failure:\nre-deploy :prod image + prod-previous.zip"]
+        SV --> RES --> RESZ --> CRP --> FHP --> TAG
+        CRP -. "any step fails" .-> RB
+        FHP -. "any step fails" .-> RB
+        TAG -. "any step fails" .-> RB
     end
 
-    AR --> PR
+    SP["smoke-prod\n8 @smoke scenarios\n(does NOT trigger rollback on failure)"]
+    DP --> SP
 ```
 
-**Artifact promotion:** prod deploys reuse the Docker image built for staging — no rebuild on merge. The frontend dist is downloaded from the staging workflow artifact and deployed directly.
+**Image source of truth.** Both staging and prod deploy the `:sha-<sha>` image pushed during develop's `build-and-test`. Prod doesn't rebuild — it resolves the image by extracting the develop tip SHA from the merge commit (`parents[1]`) and confirming the tag exists in Artifact Registry before deploy. The `:prod` tag is applied **after** the prod Cloud Run + Firebase deploys succeed (not after staging smoke) and serves only as a rollback target on subsequent deploys.
 
-**Artifact Registry cleanup:** `infra/artifact-policy.json` keeps `prod`-tagged and `latest`-tagged images indefinitely; everything else is deleted after 4 hours. The `prod` tag is applied in CI only after the staging smoke test passes — it always points to the last known-good image and moving it to a new image automatically removes it from the old one. A separate policy (`infra/gcf-artifact-policy.json`) covers the `gcf-artifacts` repo: keep 3 most recent versions, delete everything older than 4 hours.
+**Image presence check (perm trap).** The "Resolve Docker image" step uses `gcloud artifacts docker tags list --filter=tag:sha-<sha>` rather than `gcloud artifacts docker images describe`. `describe` requires `containeranalysis.occurrences.list`, which the deploy SA does not have — and the CLI surfaces that permission denial as a misleading `Image not found` error. Using `tags list` keeps the check on `artifactregistry.tags.list`, which the deploy SA already holds. Do not switch back to `describe` without first granting the Container Analysis read role.
+
+**Multi-arch digest note.** `docker buildx` pushes a multi-arch manifest list. The `:sha-<sha>` tag points to the list digest; Cloud Run pulls and records the platform-specific child digest (linux/amd64). `gcloud run revisions list` showing a different image digest from `gcloud artifacts docker tags list` for the same tag is expected, not a deploy mismatch.
+
+**Rollback semantics.** `Rollback on failure` is scoped to the `deploy-prod` job — it fires only if a step *inside* deploy-prod fails (Cloud Run, Firebase, or the prod-tag promote). A `smoke-prod` failure runs in a separate job and does **not** auto-rollback; you must manually re-deploy `:prod-previous` if smoke catches a regression that deploy-prod missed.
+
+**Artifact Registry cleanup.** `infra/artifact-policy.json` keeps `prod`-, `prod-previous`-, and `latest`-tagged images indefinitely; everything else is deleted after 24 hours. A separate policy (`infra/gcf-artifact-policy.json`) covers the `gcf-artifacts` repo: keep 3 most recent versions, delete everything older than 4 hours.
 
 **GCP auth:** Workload Identity Federation (no stored service account keys).
 
@@ -328,9 +337,10 @@ graph TD
         CRS --- FAS
     end
 
-    GH -- "build image" --> AR
-    AR -- "promote :prod" --> CRP
-    AR -- ":latest" --> CRS
+    GH -- "build image :sha-<sha>" --> AR
+    AR -- ":sha-<sha>" --> CRP
+    AR -- ":sha-<sha>" --> CRS
+    CRP -- "tag :prod after deploy" --> AR
     GH -- "deploy frontend" --> FHP
     GH -- "deploy frontend" --> FHS
 ```
