@@ -106,7 +106,7 @@ func deriveState(espnState, statusName string) string {
 		"STATUS_EXTRA_TIME", "STATUS_SHOOTOUT":
 		return "in"
 	case "STATUS_FULL_TIME", "STATUS_FINAL", "STATUS_FT",
-		"STATUS_FULL_PEN", "STATUS_ABANDONED":
+		"STATUS_FULL_PEN", "STATUS_FINAL_PEN", "STATUS_FINAL_AET", "STATUS_ABANDONED":
 		return "post"
 	default:
 		return "pre"

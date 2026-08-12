@@ -155,6 +155,18 @@ func TestParseEvents_PopulatesVenue(t *testing.T) {
 	}
 }
 
+func TestDeriveState_FinalPenIsPost(t *testing.T) {
+	if got := deriveState("", "STATUS_FINAL_PEN"); got != "post" {
+		t.Errorf("deriveState STATUS_FINAL_PEN: want %q, got %q", "post", got)
+	}
+}
+
+func TestDeriveState_FinalAETIsPost(t *testing.T) {
+	if got := deriveState("", "STATUS_FINAL_AET"); got != "post" {
+		t.Errorf("deriveState STATUS_FINAL_AET: want %q, got %q", "post", got)
+	}
+}
+
 func TestParseEvents_SkipsEventWithNoCompetitions(t *testing.T) {
 	var data espnResponse
 	if err := json.Unmarshal([]byte(`{"events":[{"id":"e1","date":"2026-05-01T20:00Z","competitions":[]}]}`), &data); err != nil {
