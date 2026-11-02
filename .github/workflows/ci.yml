@@ -354,7 +354,7 @@ jobs:
       - name: Run staging smoke tests
         run: npm run test:smoke
         env:
-          STAGING_URL: https://subtle-canto-513501-i3.web.app
+          STAGING_URL: https://subtle-canto-513501-i3.firebaseapp.com
           STAGING_API_KEY: ${{ secrets.STAGING_FIREBASE_API_KEY }}
           SMOKE_TEST_PASSWORD: ${{ secrets.SMOKE_TEST_PASSWORD }}
 
