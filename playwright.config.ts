@@ -45,7 +45,7 @@ export default defineConfig({
       env: {
         PORT: '8092',
         FIREBASE_AUTH_EMULATOR_HOST: '127.0.0.1:9099',
-        FIREBASE_PROJECT_ID: 'crew-predictions',
+        FIREBASE_PROJECT_ID: 'crew-predictions-510902',
         FIREBASE_API_KEY: 'fake-api-key',
         FIREBASE_AUTH_DOMAIN: 'localhost',
         TEST_MODE: '1',
