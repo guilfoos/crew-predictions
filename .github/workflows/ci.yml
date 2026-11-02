@@ -131,11 +131,11 @@ jobs:
 
       - name: Start Firebase emulators
         run: |
-          nohup npx firebase emulators:start --only auth,firestore --project crew-predictions \
+          nohup npx firebase emulators:start --only auth,firestore --project crew-predictions-510902 \
             > /tmp/emulators.log 2>&1 &
           echo $! > /tmp/emulators.pid
         env:
-          FIREBASE_PROJECT_ID: crew-predictions
+          FIREBASE_PROJECT_ID: crew-predictions-510902
 
       - name: Wait for Firebase emulators
         run: |
@@ -155,7 +155,7 @@ jobs:
           go tool gotestsum --junitfile-testcase-classname=relative --junitfile go-integration-results.xml -- -tags integration ./internal/repository/...
         env:
           FIRESTORE_EMULATOR_HOST: 127.0.0.1:8091
-          FIREBASE_PROJECT_ID: crew-predictions
+          FIREBASE_PROJECT_ID: crew-predictions-510902
 
       - name: Go integration test report
         uses: dorny/test-reporter@v3
@@ -173,7 +173,7 @@ jobs:
           echo "## Playwright E2E" >> $GITHUB_STEP_SUMMARY
           npm test
         env:
-          FIREBASE_PROJECT_ID: crew-predictions
+          FIREBASE_PROJECT_ID: crew-predictions-510902
           FIREBASE_AUTH_EMULATOR_HOST: 127.0.0.1:9099
 
       - name: Playwright test report
@@ -291,16 +291,16 @@ jobs:
           context: .
           push: true
           tags: |
-            us-east5-docker.pkg.dev/crew-predictions/crew-predictions/crew-predictions:sha-${{ github.sha }}
-            us-east5-docker.pkg.dev/crew-predictions/crew-predictions/crew-predictions:latest
+            us-east5-docker.pkg.dev/crew-predictions-510902/crew-predictions/crew-predictions:sha-${{ github.sha }}
+            us-east5-docker.pkg.dev/crew-predictions-510902/crew-predictions/crew-predictions:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: Deploy to staging Cloud Run
         run: |
           gcloud run deploy crew-predictions-staging \
-            --image=us-east5-docker.pkg.dev/crew-predictions/crew-predictions/crew-predictions:sha-${{ github.sha }} \
-            --project=crew-predictions-staging \
+            --image=us-east5-docker.pkg.dev/crew-predictions-510902/crew-predictions/crew-predictions:sha-${{ github.sha }} \
+            --project=subtle-canto-513501-i3 \
             --region=us-east5 \
             --allow-unauthenticated \
             --concurrency=80 \
@@ -310,14 +310,14 @@ jobs:
             --max-instances=20 \
             --timeout=300 \
             --cpu-boost \
-            --set-env-vars=FIREBASE_PROJECT_ID=crew-predictions-staging,FIREBASE_API_KEY=$STAGING_API_KEY,FIREBASE_AUTH_DOMAIN=crew-predictions-staging.web.app,GOOGLE_CLOUD_PROJECT=crew-predictions-staging,FIREBASE_MEASUREMENT_ID=G-7N1MBBZ18B,FIREBASE_APP_ID=1:99152086201:web:3ea10e771e33452cecc768,CLOUD_TASKS_PROJECT=crew-predictions-staging,CLOUD_TASKS_LOCATION=us-east4,CLOUD_TASKS_QUEUE=match-polling,CLOUD_TASKS_TARGET_URL=https://crew-predictions-staging-wnzfln25pq-ul.a.run.app/admin/poll-scores \
+            --set-env-vars=FIREBASE_PROJECT_ID=subtle-canto-513501-i3,FIREBASE_API_KEY=$STAGING_API_KEY,FIREBASE_AUTH_DOMAIN=subtle-canto-513501-i3.firebaseapp.com,GOOGLE_CLOUD_PROJECT=subtle-canto-513501-i3,FIREBASE_MEASUREMENT_ID=G-7N1MBBZ18B,FIREBASE_APP_ID=1:99152086201:web:3ea10e771e33452cecc768,CLOUD_TASKS_PROJECT=subtle-canto-513501-i3,CLOUD_TASKS_LOCATION=us-east4,CLOUD_TASKS_QUEUE=match-polling,CLOUD_TASKS_TARGET_URL=https://crew-predictions-staging-wnzfln25pq-ul.a.run.app/admin/poll-scores \
             --update-secrets=ADMIN_KEY=admin-key:latest,SESSION_SECRET=session-secret:latest \
             --quiet
         env:
           STAGING_API_KEY: ${{ secrets.STAGING_FIREBASE_API_KEY }}
 
       - name: Deploy staging to Firebase Hosting
-        run: npx firebase deploy --only hosting --project crew-predictions-staging --config firebase.staging.json
+        run: npx firebase deploy --only hosting --project subtle-canto-513501-i3 --config firebase.staging.json
 
       - name: Deploy Firestore rules + indexes to staging
         run: npx firebase deploy --only firestore --project crew-predictions-staging --config firebase.staging.json
@@ -413,14 +413,14 @@ jobs:
 
       - name: Save prod-previous (rollback targets)
         run: |
-          IMAGE=us-east5-docker.pkg.dev/crew-predictions/crew-predictions/crew-predictions
+          IMAGE=us-east5-docker.pkg.dev/crew-predictions-510902/crew-predictions/crew-predictions
           gcloud artifacts docker tags add ${IMAGE}:prod ${IMAGE}:prod-previous --quiet || true
           gcloud storage cp gs://crew-predictions-frontend/prod.zip \
             gs://crew-predictions-frontend/prod-previous.zip || true
 
       - name: Resolve Docker image
         run: |
-          IMAGE=us-east5-docker.pkg.dev/crew-predictions/crew-predictions/crew-predictions
+          IMAGE=us-east5-docker.pkg.dev/crew-predictions-510902/crew-predictions/crew-predictions
           SHA="${{ env.DEVELOP_SHA }}"
           if [ -z "$SHA" ]; then
             echo "DEPLOY_IMAGE=${IMAGE}:latest" >> $GITHUB_ENV
@@ -468,21 +468,21 @@ jobs:
             --max-instances=20 \
             --timeout=300 \
             --cpu-boost \
-            --set-env-vars=FIREBASE_PROJECT_ID=crew-predictions,FIREBASE_API_KEY=$PROD_API_KEY,FIREBASE_AUTH_DOMAIN=crew-predictions.web.app,GOOGLE_CLOUD_PROJECT=crew-predictions,FIREBASE_MEASUREMENT_ID=G-PFL8D07Q09,FIREBASE_APP_ID=1:937208344837:web:28d1ccfe9f2ac0a2dd876c,CLOUD_TASKS_PROJECT=crew-predictions,CLOUD_TASKS_LOCATION=us-east4,CLOUD_TASKS_QUEUE=match-polling,CLOUD_TASKS_TARGET_URL=https://crew-predictions-3qbonlobra-ul.a.run.app/admin/poll-scores \
+            --set-env-vars=FIREBASE_PROJECT_ID=crew-predictions-510902,FIREBASE_API_KEY=$PROD_API_KEY,FIREBASE_AUTH_DOMAIN=crew-predictions-510902.firebaseapp.com,GOOGLE_CLOUD_PROJECT=crew-predictions-510902,FIREBASE_MEASUREMENT_ID=G-PFL8D07Q09,FIREBASE_APP_ID=1:937208344837:web:28d1ccfe9f2ac0a2dd876c,CLOUD_TASKS_PROJECT=crew-predictions-510902,CLOUD_TASKS_LOCATION=us-east4,CLOUD_TASKS_QUEUE=match-polling,CLOUD_TASKS_TARGET_URL=https://crew-predictions-3qbonlobra-ul.a.run.app/admin/poll-scores \
             --update-secrets=ADMIN_KEY=admin-key:latest,SESSION_SECRET=session-secret:latest \
             --quiet
         env:
           PROD_API_KEY: ${{ secrets.PROD_FIREBASE_API_KEY }}
 
       - name: Deploy to Firebase Hosting
-        run: npx firebase deploy --only hosting --project crew-predictions
+        run: npx firebase deploy --only hosting --project crew-predictions-510902
 
       - name: Deploy Firestore rules + indexes to prod
-        run: npx firebase deploy --only firestore --project crew-predictions
+        run: npx firebase deploy --only firestore --project crew-predictions-510902
 
       - name: Promote prod tags
         run: |
-          IMAGE=us-east5-docker.pkg.dev/crew-predictions/crew-predictions/crew-predictions
+          IMAGE=us-east5-docker.pkg.dev/crew-predictions-510902/crew-predictions/crew-predictions
           gcloud artifacts docker tags add ${{ env.DEPLOY_IMAGE }} ${IMAGE}:prod --quiet
           gcloud storage cp frontend.zip gs://crew-predictions-frontend/prod.zip
           echo "prod promoted — image: ${{ env.DEPLOY_IMAGE }}, frontend: ${{ env.FRONTEND_SOURCE }}"
@@ -491,7 +491,7 @@ jobs:
         if: failure()
         run: |
           echo "::error::Deploy failed — rolling back to previous prod"
-          IMAGE=us-east5-docker.pkg.dev/crew-predictions/crew-predictions/crew-predictions
+          IMAGE=us-east5-docker.pkg.dev/crew-predictions-510902/crew-predictions/crew-predictions
 
           gcloud run deploy crew-predictions \
             --image=${IMAGE}:prod \
@@ -504,7 +504,7 @@ jobs:
           if gcloud storage ls gs://crew-predictions-frontend/prod-previous.zip 2>/dev/null; then
             gcloud storage cp gs://crew-predictions-frontend/prod-previous.zip rollback.zip
             rm -rf dist/ && unzip -q rollback.zip -d dist/
-            npx firebase deploy --only hosting --project crew-predictions \
+            npx firebase deploy --only hosting --project crew-predictions-510902 \
               && echo "Firebase Hosting rolled back to prod-previous" \
               || echo "::error::Firebase rollback failed — manual intervention required"
           else
