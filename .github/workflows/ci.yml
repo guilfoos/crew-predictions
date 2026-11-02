@@ -475,10 +475,10 @@ jobs:
           PROD_API_KEY: ${{ secrets.PROD_FIREBASE_API_KEY }}
 
       - name: Deploy to Firebase Hosting
-        run: npx firebase deploy --only hosting --project crew-predictions-510902
+        run: npx firebase deploy --only hosting --project crew-predictions-510902 --config firebase.prod.json
 
       - name: Deploy Firestore rules + indexes to prod
-        run: npx firebase deploy --only firestore --project crew-predictions-510902
+        run: npx firebase deploy --only firestore --project crew-predictions-510902 --config firebase.prod.json
 
       - name: Promote prod tags
         run: |
