@@ -6,10 +6,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/mcornell/crew-predictions/internal/models"
-	"github.com/mcornell/crew-predictions/internal/poll"
-	"github.com/mcornell/crew-predictions/internal/repository"
-	"github.com/mcornell/crew-predictions/internal/tasks"
+	"github.com/guilfoos/crew-predictions/internal/models"
+	"github.com/guilfoos/crew-predictions/internal/poll"
+	"github.com/guilfoos/crew-predictions/internal/repository"
+	"github.com/guilfoos/crew-predictions/internal/tasks"
 )
 
 // pollChainInterval is how far in the future the next chain task is scheduled
@@ -28,14 +28,14 @@ const pollChainMaxAge = 4 * time.Hour
 // resume today" states. Chain ends on any of these; the next 4am/12pm/6pm
 // refresh picks up rescheduled kickoffs and seeds a fresh chain if needed.
 var terminalStatuses = map[string]bool{
-	"STATUS_FULL_TIME":  true,
-	"STATUS_FINAL_AET":  true,
-	"STATUS_FINAL_PEN":  true,
-	"STATUS_POSTPONED":  true,
-	"STATUS_CANCELED":   true,
-	"STATUS_CANCELLED":  true, // ESPN inconsistency between US/UK spelling
-	"STATUS_ABANDONED":  true,
-	"STATUS_FORFEIT":    true,
+	"STATUS_FULL_TIME": true,
+	"STATUS_FINAL_AET": true,
+	"STATUS_FINAL_PEN": true,
+	"STATUS_POSTPONED": true,
+	"STATUS_CANCELED":  true,
+	"STATUS_CANCELLED": true, // ESPN inconsistency between US/UK spelling
+	"STATUS_ABANDONED": true,
+	"STATUS_FORFEIT":   true,
 }
 
 type PollScoresHandler struct {

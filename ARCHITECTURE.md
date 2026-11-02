@@ -42,9 +42,9 @@ graph LR
     CR --> ESPN
 ```
 
-**Local dev:** Vite dev server (:5173) proxies `/api`, `/auth`, `/admin` to Go server (:8080). Firebase Auth + Firestore emulators run on :9099 and :8081.
+**Local dev:** Vite dev server (:5173) proxies `/api`, `/auth`, `/admin` to Go server (:8080). Firebase Auth + Firestore emulators run on :9099 and :8091.
 
-**E2e test server:** `npm test` starts two servers in parallel — Go API on :8082 (TEST_MODE) and Vite preview on :8083. Playwright's `baseURL` is :8083, which proxies `/api`/`/auth`/`/admin` to :8082, mirroring production (Firebase Hosting → Cloud Run). Both can run alongside `dev.sh` without port conflicts.
+**E2e test server:** `npm test` starts two servers in parallel — Go API on :8092 (TEST_MODE) and Vite preview on :8083. Playwright's `baseURL` is :8083, which proxies `/api`/`/auth`/`/admin` to :8092, mirroring production (Firebase Hosting → Cloud Run). Both can run alongside `dev.sh` without port conflicts.
 
 ---
 
@@ -387,11 +387,11 @@ The four `CLOUD_TASKS_*` vars must all be set for chain enqueueing to activate. 
 ## Local Dev Commands
 
 ```bash
-./dev.sh               # start Firebase emulators (:8081/:9099) + Go server (:8080)
+./dev.sh               # start Firebase emulators (:8091/:9099) + Go server (:8080)
 npm run dev            # Vite dev server (:5173) with hot reload + API proxy
 go test ./...          # Go unit tests
 npm run test:unit      # Vitest unit tests
-npm test               # e2e BDD suite — starts own server on :8082; dev.sh can stay running
+npm test               # e2e BDD suite — starts own server on :8092; dev.sh can stay running
 npm run test:smoke     # smoke suite against staging (STAGING_URL env var)
 SMOKE_DEBUG=1 npm run test:smoke  # headed browser + video locally
 ```

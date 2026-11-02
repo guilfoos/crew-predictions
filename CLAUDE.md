@@ -51,7 +51,7 @@ Predictions ranking system for Columbus Crew fans. Sarcastic #Crew96 tone. Only 
 
 ```bash
 go test ./...                                           # Go unit tests — always run the full suite
-FIRESTORE_EMULATOR_HOST=localhost:8081 go test -tags integration ./internal/repository/...  # Firestore integration tests (requires emulator)
+FIRESTORE_EMULATOR_HOST=localhost:8091 go test -tags integration ./internal/repository/...  # Firestore integration tests (requires emulator)
 npm run typecheck      # TypeScript type check (vue-tsc --noEmit)
 npm run test:unit      # Vitest unit tests for Vue components
 npm test               # e2e BDD outer loop — runs against local emulator

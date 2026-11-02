@@ -6,7 +6,7 @@ import (
 
 	"cloud.google.com/go/firestore"
 
-	"github.com/mcornell/crew-predictions/internal/models"
+	"github.com/guilfoos/crew-predictions/internal/models"
 )
 
 type FirestoreMatchStore struct {
@@ -36,23 +36,23 @@ func (s *FirestoreMatchStore) SaveAll(matches []models.Match) error {
 			}
 		}
 		_, _ = batch.Set(ref, map[string]any{
-			"homeTeam":     m.HomeTeam,
-			"awayTeam":     m.AwayTeam,
-			"kickoff":      m.Kickoff,
-			"status":       m.Status,
-			"homeScore":    m.HomeScore,
-			"awayScore":    m.AwayScore,
-			"state":        m.State,
-			"displayClock": m.DisplayClock,
-			"venue":        m.Venue,
-			"homeRecord":   m.HomeRecord,
-			"awayRecord":   m.AwayRecord,
-			"homeForm":     m.HomeForm,
-			"awayForm":     m.AwayForm,
-			"homeLogo":     m.HomeLogo,
-			"awayLogo":     m.AwayLogo,
-			"attendance":   m.Attendance,
-			"referee":      m.Referee,
+			"homeTeam":       m.HomeTeam,
+			"awayTeam":       m.AwayTeam,
+			"kickoff":        m.Kickoff,
+			"status":         m.Status,
+			"homeScore":      m.HomeScore,
+			"awayScore":      m.AwayScore,
+			"state":          m.State,
+			"displayClock":   m.DisplayClock,
+			"venue":          m.Venue,
+			"homeRecord":     m.HomeRecord,
+			"awayRecord":     m.AwayRecord,
+			"homeForm":       m.HomeForm,
+			"awayForm":       m.AwayForm,
+			"homeLogo":       m.HomeLogo,
+			"awayLogo":       m.AwayLogo,
+			"attendance":     m.Attendance,
+			"referee":        m.Referee,
 			"events":         events,
 			"lastPollAt":     m.LastPollAt,
 			"chainSeededFor": m.ChainSeededFor,
@@ -84,22 +84,22 @@ func (s *FirestoreMatchStore) Reset() {}
 
 func toMatch(snap *firestore.DocumentSnapshot) (models.Match, error) {
 	var doc struct {
-		HomeTeam     string    `firestore:"homeTeam"`
-		AwayTeam     string    `firestore:"awayTeam"`
-		Kickoff      time.Time `firestore:"kickoff"`
-		Status       string    `firestore:"status"`
-		HomeScore    string    `firestore:"homeScore"`
-		AwayScore    string    `firestore:"awayScore"`
-		State        string    `firestore:"state"`
-		DisplayClock string    `firestore:"displayClock"`
-		Venue        string    `firestore:"venue"`
-		HomeRecord   string    `firestore:"homeRecord"`
-		AwayRecord   string    `firestore:"awayRecord"`
-		HomeForm     string    `firestore:"homeForm"`
-		AwayForm     string    `firestore:"awayForm"`
-		HomeLogo     string    `firestore:"homeLogo"`
-		AwayLogo     string    `firestore:"awayLogo"`
-		Attendance   int64     `firestore:"attendance"`
+		HomeTeam       string    `firestore:"homeTeam"`
+		AwayTeam       string    `firestore:"awayTeam"`
+		Kickoff        time.Time `firestore:"kickoff"`
+		Status         string    `firestore:"status"`
+		HomeScore      string    `firestore:"homeScore"`
+		AwayScore      string    `firestore:"awayScore"`
+		State          string    `firestore:"state"`
+		DisplayClock   string    `firestore:"displayClock"`
+		Venue          string    `firestore:"venue"`
+		HomeRecord     string    `firestore:"homeRecord"`
+		AwayRecord     string    `firestore:"awayRecord"`
+		HomeForm       string    `firestore:"homeForm"`
+		AwayForm       string    `firestore:"awayForm"`
+		HomeLogo       string    `firestore:"homeLogo"`
+		AwayLogo       string    `firestore:"awayLogo"`
+		Attendance     int64     `firestore:"attendance"`
 		Referee        string    `firestore:"referee"`
 		LastPollAt     time.Time `firestore:"lastPollAt"`
 		ChainSeededFor time.Time `firestore:"chainSeededFor"`
@@ -124,23 +124,23 @@ func toMatch(snap *firestore.DocumentSnapshot) (models.Match, error) {
 		}
 	}
 	return models.Match{
-		ID:           snap.Ref.ID,
-		HomeTeam:     doc.HomeTeam,
-		AwayTeam:     doc.AwayTeam,
-		Kickoff:      doc.Kickoff,
-		Status:       doc.Status,
-		HomeScore:    doc.HomeScore,
-		AwayScore:    doc.AwayScore,
-		State:        doc.State,
-		DisplayClock: doc.DisplayClock,
-		Venue:        doc.Venue,
-		HomeRecord:   doc.HomeRecord,
-		AwayRecord:   doc.AwayRecord,
-		HomeForm:     doc.HomeForm,
-		AwayForm:     doc.AwayForm,
-		HomeLogo:     doc.HomeLogo,
-		AwayLogo:     doc.AwayLogo,
-		Attendance:   int(doc.Attendance),
+		ID:             snap.Ref.ID,
+		HomeTeam:       doc.HomeTeam,
+		AwayTeam:       doc.AwayTeam,
+		Kickoff:        doc.Kickoff,
+		Status:         doc.Status,
+		HomeScore:      doc.HomeScore,
+		AwayScore:      doc.AwayScore,
+		State:          doc.State,
+		DisplayClock:   doc.DisplayClock,
+		Venue:          doc.Venue,
+		HomeRecord:     doc.HomeRecord,
+		AwayRecord:     doc.AwayRecord,
+		HomeForm:       doc.HomeForm,
+		AwayForm:       doc.AwayForm,
+		HomeLogo:       doc.HomeLogo,
+		AwayLogo:       doc.AwayLogo,
+		Attendance:     int(doc.Attendance),
 		Referee:        doc.Referee,
 		LastPollAt:     doc.LastPollAt,
 		ChainSeededFor: doc.ChainSeededFor,

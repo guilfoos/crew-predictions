@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"sort"
 
-	"github.com/mcornell/crew-predictions/internal/repository"
+	"github.com/guilfoos/crew-predictions/internal/repository"
 )
 
 type ProfileHandler struct {

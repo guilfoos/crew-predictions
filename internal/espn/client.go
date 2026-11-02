@@ -10,7 +10,7 @@ import (
 	"sort"
 	"time"
 
-	"github.com/mcornell/crew-predictions/internal/models"
+	"github.com/guilfoos/crew-predictions/internal/models"
 )
 
 // scoreField handles ESPN's polymorphic score value: either an integer (upcoming)

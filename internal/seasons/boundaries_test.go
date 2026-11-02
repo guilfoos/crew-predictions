@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/mcornell/crew-predictions/internal/seasons"
+	"github.com/guilfoos/crew-predictions/internal/seasons"
 )
 
 func TestAllSeasons(t *testing.T) {

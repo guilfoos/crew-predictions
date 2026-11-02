@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/mcornell/crew-predictions/internal/repository"
+	"github.com/guilfoos/crew-predictions/internal/repository"
 )
 
 // Stores groups every repository the server depends on. Built once at startup;

@@ -7,7 +7,7 @@ import (
 	firebase "firebase.google.com/go/v4"
 	"google.golang.org/api/option"
 
-	"github.com/mcornell/crew-predictions/internal/handlers"
+	"github.com/guilfoos/crew-predictions/internal/handlers"
 )
 
 // buildVerifier returns a Firebase Auth token verifier when configuration

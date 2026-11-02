@@ -53,6 +53,16 @@ npm install
 npm run dev
 ```
 
+The macOS development environment is different enough that a few changes are required.
+```bash
+# Mac specific setup beyond npm install
+brew install go
+brew install firebase-cli
+brew install java
+
+./dev.mac.sh
+```
+
 Open `http://localhost:5173`.
 
 **Run tests:**

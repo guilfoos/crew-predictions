@@ -13,7 +13,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/mcornell/crew-predictions/internal/repository"
+	"github.com/guilfoos/crew-predictions/internal/repository"
 )
 
 var sessionSecret []byte

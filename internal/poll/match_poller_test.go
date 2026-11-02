@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/mcornell/crew-predictions/internal/models"
-	"github.com/mcornell/crew-predictions/internal/poll"
-	"github.com/mcornell/crew-predictions/internal/repository"
+	"github.com/guilfoos/crew-predictions/internal/models"
+	"github.com/guilfoos/crew-predictions/internal/poll"
+	"github.com/guilfoos/crew-predictions/internal/repository"
 )
 
 // immediateTimer fires the callback synchronously, ignoring the delay.

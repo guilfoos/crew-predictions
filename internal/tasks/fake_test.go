@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/mcornell/crew-predictions/internal/tasks"
+	"github.com/guilfoos/crew-predictions/internal/tasks"
 )
 
 func TestFakeEnqueuer_RecordsCallsInOrder(t *testing.T) {

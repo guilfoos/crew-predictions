@@ -153,7 +153,7 @@ The `genkit` package provides `package:genkit/client.dart` representing remote G
 import 'package:genkit/client.dart';
 
 final stringAction = defineRemoteAction(
-  url: 'http://localhost:3400/my-flow',
+  url: 'http://127.0.0.1:3400/my-flow',
   inputSchema: .string(),
   outputSchema: .string(),
 );
@@ -169,7 +169,7 @@ print('Flow Response: $response');
 Use the `.stream()` method on the action flow, and access `stream.onResult` to wait on the async return value.
 ```dart
 final streamAction = defineRemoteAction(
-  url: 'http://localhost:3400/stream-story',
+  url: 'http://127.0.0.1:3400/stream-story',
   inputSchema: .string(),
   outputSchema: .string(),
   streamSchema: .string(),

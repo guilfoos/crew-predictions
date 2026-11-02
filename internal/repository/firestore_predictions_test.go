@@ -7,7 +7,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/mcornell/crew-predictions/internal/repository"
+	"github.com/guilfoos/crew-predictions/internal/repository"
 )
 
 func firestoreOrSkip(t *testing.T) *repository.FirestorePredictionStore {

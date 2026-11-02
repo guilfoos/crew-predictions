@@ -6,7 +6,7 @@ import (
 	"sort"
 	"time"
 
-	"github.com/mcornell/crew-predictions/internal/repository"
+	"github.com/guilfoos/crew-predictions/internal/repository"
 )
 
 // CloseSeason snapshots the current standings for seasonID, ranks entries by

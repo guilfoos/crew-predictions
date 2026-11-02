@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/mcornell/crew-predictions/internal/repository"
+	"github.com/guilfoos/crew-predictions/internal/repository"
 )
 
 func TestMemorySeasonStore_SaveAndGetByID(t *testing.T) {

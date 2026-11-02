@@ -40,10 +40,10 @@ export default defineConfig({
   webServer: [
     {
       command: process.env.CI ? './server' : 'go run ./cmd/server',
-      port: 8082,
+      port: 8092,
       reuseExistingServer: !process.env.CI,
       env: {
-        PORT: '8082',
+        PORT: '8092',
         FIREBASE_AUTH_EMULATOR_HOST: '127.0.0.1:9099',
         FIREBASE_PROJECT_ID: 'crew-predictions',
         FIREBASE_API_KEY: 'fake-api-key',

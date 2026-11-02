@@ -1,35 +1,12 @@
 {
   "hosting": {
-    "public": "dist",
-    "versions": { "maxVersions": 5 },
+    "public": "public",
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
     ],
-    "headers": [
-      {
-        "source": "/assets/**",
-        "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
-      },
-      {
-        "source": "**",
-        "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
-      }
-    ],
     "rewrites": [
-      {
-        "source": "/api/**",
-        "run": { "serviceId": "crew-predictions", "region": "us-east5" }
-      },
-      {
-        "source": "/auth/**",
-        "run": { "serviceId": "crew-predictions", "region": "us-east5" }
-      },
-      {
-        "source": "/admin/**",
-        "run": { "serviceId": "crew-predictions", "region": "us-east5" }
-      },
       {
         "source": "**",
         "destination": "/index.html"
@@ -45,7 +22,7 @@
       "port": 9099
     },
     "firestore": {
-      "port": 8081
+      "port": 8091
     },
     "hosting": {
       "port": 5000

@@ -1,7 +1,9 @@
 {
   "projects": {
-    "default": "crew-predictions",
-    "production": "crew-predictions",
-    "staging": "crew-predictions-staging"
-  }
+    "default": "crew-predictions-510902",
+    "production": "crew-predictions-510902",
+    "staging": "subtle-canto-513501-i3"
+  },
+  "targets": {},
+  "etags": {}
 }

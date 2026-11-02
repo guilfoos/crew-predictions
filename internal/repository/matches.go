@@ -3,7 +3,7 @@ package repository
 import (
 	"sync"
 
-	"github.com/mcornell/crew-predictions/internal/models"
+	"github.com/guilfoos/crew-predictions/internal/models"
 )
 
 type MatchStore interface {

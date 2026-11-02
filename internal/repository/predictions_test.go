@@ -5,7 +5,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/mcornell/crew-predictions/internal/repository"
+	"github.com/guilfoos/crew-predictions/internal/repository"
 )
 
 func TestMemoryPredictionStore_Reset_ClearsAllData(t *testing.T) {

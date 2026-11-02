@@ -12,16 +12,16 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/api': 'http://localhost:8080',
-      '/auth': 'http://localhost:8080',
-      '/admin': 'http://localhost:8080',
+      '/api': 'http://127.0.0.1:8080',
+      '/auth': 'http://127.0.0.1:8080',
+      '/admin': 'http://127.0.0.1:8080',
     },
   },
   preview: {
     proxy: {
-      '/api': 'http://localhost:8082',
-      '/auth': 'http://localhost:8082',
-      '/admin': 'http://localhost:8082',
+      '/api': 'http://127.0.0.1:8092',
+      '/auth': 'http://127.0.0.1:8092',
+      '/admin': 'http://127.0.0.1:8092',
     },
   },
 })

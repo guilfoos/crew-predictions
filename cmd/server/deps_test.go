@@ -6,10 +6,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/mcornell/crew-predictions/internal/espn"
-	"github.com/mcornell/crew-predictions/internal/handlers"
-	"github.com/mcornell/crew-predictions/internal/models"
-	"github.com/mcornell/crew-predictions/internal/repository"
+	"github.com/guilfoos/crew-predictions/internal/espn"
+	"github.com/guilfoos/crew-predictions/internal/handlers"
+	"github.com/guilfoos/crew-predictions/internal/models"
+	"github.com/guilfoos/crew-predictions/internal/repository"
 )
 
 // fnPtr returns the underlying code pointer of a function value so we can

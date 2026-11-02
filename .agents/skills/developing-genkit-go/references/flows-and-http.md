@@ -133,7 +133,7 @@ log.Fatal(server.Start(ctx, "127.0.0.1:8080", mux))
 
 **Non-streaming request:**
 ```bash
-curl -X POST http://localhost:8080/jokeFlow \
+curl -X POST http://127.0.0.1:8080/jokeFlow \
   -H "Content-Type: application/json" \
   -d '{"data": "bananas"}'
 ```
@@ -142,7 +142,7 @@ Response: `{"result": "Why did the banana go to the doctor?..."}`
 
 **Streaming request:**
 ```bash
-curl -N -X POST http://localhost:8080/streamingJokeFlow \
+curl -N -X POST http://127.0.0.1:8080/streamingJokeFlow \
   -H "Content-Type: application/json" \
   -d '{"data": "bananas"}'
 ```

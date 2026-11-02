@@ -8,10 +8,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/mcornell/crew-predictions/internal/bot"
-	"github.com/mcornell/crew-predictions/internal/models"
-	"github.com/mcornell/crew-predictions/internal/poll"
-	"github.com/mcornell/crew-predictions/internal/repository"
+	"github.com/guilfoos/crew-predictions/internal/bot"
+	"github.com/guilfoos/crew-predictions/internal/models"
+	"github.com/guilfoos/crew-predictions/internal/poll"
+	"github.com/guilfoos/crew-predictions/internal/repository"
 )
 
 func TestNext4amET_BeforeFourAM_ReturnsTodayAt4AM(t *testing.T) {

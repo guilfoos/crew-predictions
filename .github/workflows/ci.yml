@@ -109,7 +109,7 @@ jobs:
 
           with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as f:
               for label, path, prefix in [
-                  ('Go',  'go-coverage.xml',                  'github.com/mcornell/crew-predictions/'),
+                  ('Go',  'go-coverage.xml',                  'github.com/guilfoos/crew-predictions/'),
                   ('Vue', 'coverage/cobertura-coverage.xml',  ''),
               ]:
                   try:
@@ -140,21 +140,21 @@ jobs:
       - name: Wait for Firebase emulators
         run: |
           timeout 30 bash -c 'until curl -sf http://127.0.0.1:9099; do sleep 1; done'
-          timeout 30 bash -c 'until curl -sf http://127.0.0.1:8081; do sleep 1; done'
+          timeout 30 bash -c 'until curl -sf http://127.0.0.1:8091; do sleep 1; done'
 
       - name: Firestore rules unit tests
         run: |
           echo "## Firestore Rules" >> $GITHUB_STEP_SUMMARY
           npm run test:rules
         env:
-          FIRESTORE_EMULATOR_HOST: 127.0.0.1:8081
+          FIRESTORE_EMULATOR_HOST: 127.0.0.1:8091
 
       - name: Go integration tests
         run: |
           echo "## Go Integration Tests" >> $GITHUB_STEP_SUMMARY
           go tool gotestsum --junitfile-testcase-classname=relative --junitfile go-integration-results.xml -- -tags integration ./internal/repository/...
         env:
-          FIRESTORE_EMULATOR_HOST: 127.0.0.1:8081
+          FIRESTORE_EMULATOR_HOST: 127.0.0.1:8091
           FIREBASE_PROJECT_ID: crew-predictions
 
       - name: Go integration test report
@@ -192,8 +192,8 @@ jobs:
         run: |
           echo "=== emulator process status ==="
           ps -p "$(cat /tmp/emulators.pid 2>/dev/null)" -o pid,stat,etime,cmd 2>/dev/null || echo "parent dead"
-          echo "=== port listeners (9099 / 8081) ==="
-          ss -ltnp 2>/dev/null | grep -E ':(9099|8081)' || echo "no listeners"
+          echo "=== port listeners (9099 / 8091) ==="
+          ss -ltnp 2>/dev/null | grep -E ':(9099|8091)' || echo "no listeners"
           echo "=== dmesg tail (OOM?) ==="
           dmesg 2>/dev/null | tail -50 || echo "dmesg unavailable"
           echo "=== emulator log ==="

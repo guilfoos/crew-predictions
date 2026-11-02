@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/mcornell/crew-predictions/internal/repository"
-	"github.com/mcornell/crew-predictions/internal/seasons"
+	"github.com/guilfoos/crew-predictions/internal/repository"
+	"github.com/guilfoos/crew-predictions/internal/seasons"
 )
 
 type CloseSeasonHandler struct {

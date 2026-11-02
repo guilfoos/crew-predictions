@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/mcornell/crew-predictions/internal/repository"
-	"github.com/mcornell/crew-predictions/internal/scoring"
+	"github.com/guilfoos/crew-predictions/internal/repository"
+	"github.com/guilfoos/crew-predictions/internal/scoring"
 )
 
 type SeasonWindow struct {

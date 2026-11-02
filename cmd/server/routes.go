@@ -5,8 +5,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/mcornell/crew-predictions/internal/handlers"
-	"github.com/mcornell/crew-predictions/internal/models"
+	"github.com/guilfoos/crew-predictions/internal/handlers"
+	"github.com/guilfoos/crew-predictions/internal/models"
 )
 
 // registerRoutes mounts every production route on mux, given the constructed

@@ -3,7 +3,7 @@ import { expect } from '@playwright/test';
 
 const { Given, When, Then } = createBdd();
 
-const AUTH_EMULATOR = process.env.FIREBASE_AUTH_EMULATOR_HOST || 'localhost:9099';
+const AUTH_EMULATOR = process.env.FIREBASE_AUTH_EMULATOR_HOST || '127.0.0.1:9099';
 
 Given('a test user exists with email {string} and password {string}', async ({ request }, email: string, password: string) => {
   const resp = await request.post(

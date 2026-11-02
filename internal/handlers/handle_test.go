@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/mcornell/crew-predictions/internal/repository"
+	"github.com/guilfoos/crew-predictions/internal/repository"
 )
 
 func TestWriteSessionCookie_SecureFlagSetOutsideEmulator(t *testing.T) {

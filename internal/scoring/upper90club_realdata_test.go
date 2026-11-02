@@ -3,7 +3,7 @@ package scoring_test
 import (
 	"testing"
 
-	"github.com/mcornell/crew-predictions/internal/scoring"
+	"github.com/guilfoos/crew-predictions/internal/scoring"
 )
 
 // Real match data from the 2026 Columbus Crew season.

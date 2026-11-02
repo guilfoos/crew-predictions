@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/mcornell/crew-predictions/internal/handlers"
+	"github.com/guilfoos/crew-predictions/internal/handlers"
 )
 
 func TestBuildVerifier_NoFirebaseProjectReturnsNoop(t *testing.T) {

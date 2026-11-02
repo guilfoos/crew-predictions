@@ -108,7 +108,7 @@ ai.WithModel(model)
 import "github.com/genkit-ai/genkit/go/plugins/ollama"
 
 ollamaPlugin := &ollama.Ollama{
-	ServerAddress: "http://localhost:11434",
+	ServerAddress: "http://127.0.0.1:11434",
 	Timeout:       60, // seconds
 }
 g := genkit.Init(ctx, genkit.WithPlugins(ollamaPlugin))
