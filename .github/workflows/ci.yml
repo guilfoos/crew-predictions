@@ -310,7 +310,7 @@ jobs:
             --max-instances=20 \
             --timeout=300 \
             --cpu-boost \
-            --set-env-vars=FIREBASE_PROJECT_ID=subtle-canto-513501-i3,FIREBASE_API_KEY=$STAGING_API_KEY,FIREBASE_AUTH_DOMAIN=subtle-canto-513501-i3.firebaseapp.com,GOOGLE_CLOUD_PROJECT=subtle-canto-513501-i3,FIREBASE_MEASUREMENT_ID=G-7N1MBBZ18B,FIREBASE_APP_ID=1:99152086201:web:3ea10e771e33452cecc768,CLOUD_TASKS_PROJECT=subtle-canto-513501-i3,CLOUD_TASKS_LOCATION=us-east4,CLOUD_TASKS_QUEUE=match-polling,CLOUD_TASKS_TARGET_URL=https://crew-predictions-staging-wnzfln25pq-ul.a.run.app/admin/poll-scores \
+            --set-env-vars=FIREBASE_PROJECT_ID=subtle-canto-513501-i3,FIREBASE_API_KEY=$STAGING_API_KEY,FIREBASE_AUTH_DOMAIN=subtle-canto-513501-i3.firebaseapp.com,GOOGLE_CLOUD_PROJECT=subtle-canto-513501-i3,FIREBASE_MEASUREMENT_ID=G-KL660545KZ,FIREBASE_APP_ID=1:633081077773:web:9ff0ccdc2b44dda8aeb544,CLOUD_TASKS_PROJECT=subtle-canto-513501-i3,CLOUD_TASKS_LOCATION=us-east4,CLOUD_TASKS_QUEUE=match-polling,CLOUD_TASKS_TARGET_URL=https://crew-predictions-staging-wnzfln25pq-ul.a.run.app/admin/poll-scores \
             --update-secrets=ADMIN_KEY=admin-key:latest,SESSION_SECRET=session-secret:latest \
             --quiet
         env:
@@ -468,7 +468,7 @@ jobs:
             --max-instances=20 \
             --timeout=300 \
             --cpu-boost \
-            --set-env-vars=FIREBASE_PROJECT_ID=crew-predictions-510902,FIREBASE_API_KEY=$PROD_API_KEY,FIREBASE_AUTH_DOMAIN=crew-predictions-510902.firebaseapp.com,GOOGLE_CLOUD_PROJECT=crew-predictions-510902,FIREBASE_MEASUREMENT_ID=G-PFL8D07Q09,FIREBASE_APP_ID=1:937208344837:web:28d1ccfe9f2ac0a2dd876c,CLOUD_TASKS_PROJECT=crew-predictions-510902,CLOUD_TASKS_LOCATION=us-east4,CLOUD_TASKS_QUEUE=match-polling,CLOUD_TASKS_TARGET_URL=https://crew-predictions-3qbonlobra-ul.a.run.app/admin/poll-scores \
+            --set-env-vars=FIREBASE_PROJECT_ID=crew-predictions-510902,FIREBASE_API_KEY=$PROD_API_KEY,FIREBASE_AUTH_DOMAIN=crew-predictions-510902.firebaseapp.com,GOOGLE_CLOUD_PROJECT=crew-predictions-510902,FIREBASE_MEASUREMENT_ID=G-XBSZ6HS46Y,FIREBASE_APP_ID=1:525186631552:web:86d72dc5cba46aac38a365,CLOUD_TASKS_PROJECT=crew-predictions-510902,CLOUD_TASKS_LOCATION=us-east4,CLOUD_TASKS_QUEUE=match-polling,CLOUD_TASKS_TARGET_URL=https://crew-predictions-3qbonlobra-ul.a.run.app/admin/poll-scores \
             --update-secrets=ADMIN_KEY=admin-key:latest,SESSION_SECRET=session-secret:latest \
             --quiet
         env:
