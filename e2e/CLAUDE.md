@@ -46,12 +46,12 @@ Always run `npx bddgen` after editing a `.feature` file.
 
 It is not a substitute for the local e2e suite — run `npm test` locally first.
 
-**TEST_MODE swaps live ESPN for local fixtures.** The Go server in TEST_MODE (`PORT=8082`, used by `npm test`) routes match-summary fetches to `internal/espn/testdata/summary_<matchID>.json` via `espn.FixtureFetcher` instead of calling `site.api.espn.com`. Tests that exercise event-timeline / attendance / logos / referee should seed real ESPN match IDs that have fixtures in `testdata/` (currently 761573, 761499, 761451, 761461, 761552, 401869714). Tests that don't care about summary data can use any seed ID — missing fixtures return an empty `MatchSummary` so lazy-fetch becomes a no-op.
+**TEST_MODE swaps live ESPN for local fixtures.** The Go server in TEST_MODE (`PORT=8092`, used by `npm test`) routes match-summary fetches to `internal/espn/testdata/summary_<matchID>.json` via `espn.FixtureFetcher` instead of calling `site.api.espn.com`. Tests that exercise event-timeline / attendance / logos / referee should seed real ESPN match IDs that have fixtures in `testdata/` (currently 761573, 761499, 761451, 761461, 761552, 401869714). Tests that don't care about summary data can use any seed ID — missing fixtures return an empty `MatchSummary` so lazy-fetch becomes a no-op.
 
 ---
 
 ## Environment
 
-`npm test` starts two servers in parallel: the Go API server on :8082 (TEST_MODE) and `vite preview` on :8083. Playwright's `baseURL` is :8083, which proxies `/api`, `/auth`, and `/admin` to :8082 — mirroring the production architecture (Firebase Hosting → Cloud Run). Emulators must already be running (`./dev.sh` handles that). `dev.sh` and `npm test` can run simultaneously — no port conflict.
+`npm test` starts two servers in parallel: the Go API server on :8092 (TEST_MODE) and `vite preview` on :8083. Playwright's `baseURL` is :8083, which proxies `/api`, `/auth`, and `/admin` to :8092 — mirroring the production architecture (Firebase Hosting → Cloud Run). Emulators must already be running (`./dev.sh` handles that). `dev.sh` and `npm test` can run simultaneously — no port conflict.
 
 Do **not** set `GOOGLE_CLOUD_PROJECT` in the playwright `webServer` env — it triggers Firestore and breaks test isolation.

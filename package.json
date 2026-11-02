@@ -23,15 +23,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mcornell/crew-predictions.git"
+    "url": "git+https://github.com/guilfoos/crew-predictions.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/mcornell/crew-predictions/issues"
+    "url": "https://github.com/guilfoos/crew-predictions/issues"
   },
-  "homepage": "https://github.com/mcornell/crew-predictions#readme",
+  "homepage": "https://github.com/guilfoos/crew-predictions#readme",
   "engines": {
     "node": "^24"
   },

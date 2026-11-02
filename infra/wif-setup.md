@@ -1,6 +1,6 @@
 # Workload Identity Federation (GitHub Actions ↔ GCP)
 
-GitHub Actions authenticates to GCP without long-lived JSON service account keys via Workload Identity Federation (WIF). When a workflow runs, GitHub mints a short-lived OIDC token; GCP's WIF provider verifies the token's claims (specifically `repository == 'mcornell/crew-predictions'`) and exchanges it for a Google access token bound to a service account.
+GitHub Actions authenticates to GCP without long-lived JSON service account keys via Workload Identity Federation (WIF). When a workflow runs, GitHub mints a short-lived OIDC token; GCP's WIF provider verifies the token's claims (specifically `repository == 'guilfoos/crew-predictions'`) and exchanges it for a Google access token bound to a service account.
 
 This doc captures the configuration so it can be re-created or audited without poking through three cloud consoles.
 
@@ -17,11 +17,11 @@ Both live in the **prod** project at the global location.
 | Resource | Value |
 | --- | --- |
 | Pool ID | `github` |
-| Pool full name | `projects/937208344837/locations/global/workloadIdentityPools/github` |
+| Pool full name | `projects/525186631552/locations/global/workloadIdentityPools/github` |
 | Provider ID | `github-provider` |
-| Provider full name | `projects/937208344837/locations/global/workloadIdentityPools/github/providers/github-provider` |
+| Provider full name | `projects/525186631552/locations/global/workloadIdentityPools/github/providers/github-provider` |
 | Issuer URI | `https://token.actions.githubusercontent.com` |
-| Attribute condition | `attribute.repository == 'mcornell/crew-predictions'` |
+| Attribute condition | `attribute.repository == 'guilfoos/crew-predictions'` |
 | Attribute mapping | `attribute.repository = assertion.repository`, `google.subject = assertion.sub` |
 
 The attribute condition is the security boundary: only workflow runs originating from this specific GitHub repo can impersonate the service account. Forking the repo or running from a different repo will fail token exchange.
@@ -90,8 +90,8 @@ If the pool or provider is deleted, GitHub Actions will fail every deploy with a
 
 ```bash
 PROJECT_ID='crew-predictions'
-PROJECT_NUMBER='937208344837'
-REPO='mcornell/crew-predictions'
+PROJECT_NUMBER='525186631552'
+REPO='guilfoos/crew-predictions'
 
 # Pool
 gcloud iam workload-identity-pools create github \
@@ -121,7 +121,7 @@ Then update the GitHub repo secrets `WIF_PROVIDER` and `WIF_SERVICE_ACCOUNT` to 
 
 | Secret | Value shape | Notes |
 | --- | --- | --- |
-| `WIF_PROVIDER` | `projects/937208344837/locations/global/workloadIdentityPools/github/providers/github-provider` | Pool + provider full path |
+| `WIF_PROVIDER` | `projects/525186631552/locations/global/workloadIdentityPools/github/providers/github-provider` | Pool + provider full path |
 | `WIF_SERVICE_ACCOUNT` | `github-actions@crew-predictions.iam.gserviceaccount.com` | Service account email |
 | `STAGING_FIREBASE_API_KEY` | `AIza...` | Public Firebase web SDK API key for staging — secret because we don't want it indexed in commit history, but it's served to clients at runtime |
 | `PROD_FIREBASE_API_KEY` | `AIza...` | Same, for prod |

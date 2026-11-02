@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/mcornell/crew-predictions/internal/models"
-	"github.com/mcornell/crew-predictions/internal/repository"
-	"github.com/mcornell/crew-predictions/internal/scoring"
+	"github.com/guilfoos/crew-predictions/internal/models"
+	"github.com/guilfoos/crew-predictions/internal/repository"
+	"github.com/guilfoos/crew-predictions/internal/scoring"
 )
 
 // formatLastPollAt renders the LastPollAt time as RFC3339 for the API. Zero

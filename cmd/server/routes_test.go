@@ -5,7 +5,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/mcornell/crew-predictions/internal/handlers"
+	"github.com/guilfoos/crew-predictions/internal/handlers"
 )
 
 // TestRegisterRoutes_AllProductionRoutesMounted verifies registerRoutes wires

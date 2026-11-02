@@ -5,10 +5,10 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/mcornell/crew-predictions/internal/bot"
-	"github.com/mcornell/crew-predictions/internal/models"
-	"github.com/mcornell/crew-predictions/internal/poll"
-	"github.com/mcornell/crew-predictions/internal/repository"
+	"github.com/guilfoos/crew-predictions/internal/bot"
+	"github.com/guilfoos/crew-predictions/internal/models"
+	"github.com/guilfoos/crew-predictions/internal/poll"
+	"github.com/guilfoos/crew-predictions/internal/repository"
 )
 
 // next4amET returns the next 4:00am ET instant strictly after now. It's used

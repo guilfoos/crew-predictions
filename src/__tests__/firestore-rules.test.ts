@@ -12,7 +12,7 @@ import { resolve } from 'node:path'
 // CI it's started by the workflow before this suite runs. If the emulator
 // isn't reachable we skip rather than failing — Vitest is the wrong place to
 // surface a missing-emulator error, and CI sets EMULATOR_AVAILABLE=1.
-const EMULATOR_HOST = process.env.FIRESTORE_EMULATOR_HOST ?? 'localhost:8081'
+const EMULATOR_HOST = process.env.FIRESTORE_EMULATOR_HOST ?? 'localhost:8091'
 
 async function emulatorReachable(): Promise<boolean> {
   try {

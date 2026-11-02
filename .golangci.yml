@@ -52,4 +52,4 @@ formatters:
   settings:
     goimports:
       local-prefixes:
-        - github.com/mcornell/crew-predictions
+        - github.com/guilfoos/crew-predictions

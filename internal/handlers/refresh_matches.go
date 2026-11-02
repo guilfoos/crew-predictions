@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/mcornell/crew-predictions/internal/models"
-	"github.com/mcornell/crew-predictions/internal/repository"
-	"github.com/mcornell/crew-predictions/internal/tasks"
+	"github.com/guilfoos/crew-predictions/internal/models"
+	"github.com/guilfoos/crew-predictions/internal/repository"
+	"github.com/guilfoos/crew-predictions/internal/tasks"
 )
 
 // refreshSeedWindow bounds how far in advance the refresh seeds chain tasks.
@@ -144,4 +144,3 @@ func (h *RefreshMatchesHandler) planChainSeeds(merged []models.Match) []plannedE
 	}
 	return out
 }
-

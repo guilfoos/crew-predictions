@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/mcornell/crew-predictions/internal/repository"
-	"github.com/mcornell/crew-predictions/internal/seasons"
+	"github.com/guilfoos/crew-predictions/internal/repository"
+	"github.com/guilfoos/crew-predictions/internal/seasons"
 )
 
 func TestCloseSeason_SavesSnapshotWithRankedEntries(t *testing.T) {

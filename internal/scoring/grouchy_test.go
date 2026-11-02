@@ -3,7 +3,7 @@ package scoring_test
 import (
 	"testing"
 
-	"github.com/mcornell/crew-predictions/internal/scoring"
+	"github.com/guilfoos/crew-predictions/internal/scoring"
 )
 
 // Grouchy awards 1 point when the predicted Columbus margin lands in the

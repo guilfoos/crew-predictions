@@ -17,10 +17,10 @@
 set -euo pipefail
 
 SA='github-actions@crew-predictions.iam.gserviceaccount.com'
-REPO='mcornell/crew-predictions'
+REPO='guilfoos/crew-predictions'
 PROD_PROJECT='crew-predictions'
 STAGING_PROJECT='crew-predictions-staging'
-PROD_PROJECT_NUMBER='937208344837'
+PROD_PROJECT_NUMBER='525186631552'
 
 # Roles required on the prod project. The frontend artifact bucket
 # (gs://crew-predictions-frontend) and the Docker registry

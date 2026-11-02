@@ -17,7 +17,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/mcornell/crew-predictions/internal/espn"
+	"github.com/guilfoos/crew-predictions/internal/espn"
 )
 
 var nonDisplayable = map[string]bool{

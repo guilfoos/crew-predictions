@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/mcornell/crew-predictions/internal/models"
+	"github.com/guilfoos/crew-predictions/internal/models"
 )
 
 // ErrorPredictionStore is a test double that always fails on Save.

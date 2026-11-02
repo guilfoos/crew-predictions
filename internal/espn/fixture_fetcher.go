@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/mcornell/crew-predictions/internal/models"
+	"github.com/guilfoos/crew-predictions/internal/models"
 )
 
 // FixtureFetcher returns a SummaryFetcher backed by canned ESPN /summary

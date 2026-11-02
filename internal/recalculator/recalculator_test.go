@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/mcornell/crew-predictions/internal/recalculator"
-	"github.com/mcornell/crew-predictions/internal/repository"
+	"github.com/guilfoos/crew-predictions/internal/recalculator"
+	"github.com/guilfoos/crew-predictions/internal/repository"
 )
 
 type errorGetResultStore struct{}

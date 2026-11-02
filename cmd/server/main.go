@@ -15,7 +15,7 @@ import (
 
 	"github.com/joho/godotenv"
 
-	"github.com/mcornell/crew-predictions/internal/handlers"
+	"github.com/guilfoos/crew-predictions/internal/handlers"
 )
 
 func main() {

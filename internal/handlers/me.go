@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/mcornell/crew-predictions/internal/repository"
+	"github.com/guilfoos/crew-predictions/internal/repository"
 )
 
 type MeHandler struct {

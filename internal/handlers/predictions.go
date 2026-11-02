@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/mcornell/crew-predictions/internal/models"
-	"github.com/mcornell/crew-predictions/internal/repository"
+	"github.com/guilfoos/crew-predictions/internal/models"
+	"github.com/guilfoos/crew-predictions/internal/repository"
 )
 
 type PredictionsHandler struct {

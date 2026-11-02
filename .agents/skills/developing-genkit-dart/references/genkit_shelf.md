@@ -52,7 +52,7 @@ void main() async {
   router.post('/myFlow', shelfHandler(flow));
 
   // Start the server
-  await io.serve(router.call, 'localhost', 8080);
+  await io.serve(router.call, '127.0.0.1', 8080);
 }
 ```
 

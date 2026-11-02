@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/mcornell/crew-predictions/internal/handlers"
-	"github.com/mcornell/crew-predictions/internal/repository"
+	"github.com/guilfoos/crew-predictions/internal/handlers"
+	"github.com/guilfoos/crew-predictions/internal/repository"
 )
 
 type mockVerifier struct {

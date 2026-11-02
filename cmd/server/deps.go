@@ -5,13 +5,13 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/mcornell/crew-predictions/internal/bot"
-	"github.com/mcornell/crew-predictions/internal/espn"
-	"github.com/mcornell/crew-predictions/internal/handlers"
-	"github.com/mcornell/crew-predictions/internal/models"
-	"github.com/mcornell/crew-predictions/internal/poll"
-	"github.com/mcornell/crew-predictions/internal/recalculator"
-	"github.com/mcornell/crew-predictions/internal/tasks"
+	"github.com/guilfoos/crew-predictions/internal/bot"
+	"github.com/guilfoos/crew-predictions/internal/espn"
+	"github.com/guilfoos/crew-predictions/internal/handlers"
+	"github.com/guilfoos/crew-predictions/internal/models"
+	"github.com/guilfoos/crew-predictions/internal/poll"
+	"github.com/guilfoos/crew-predictions/internal/recalculator"
+	"github.com/guilfoos/crew-predictions/internal/tasks"
 )
 
 // Deps is the bag of dependencies passed into route registration and

@@ -1,8 +1,8 @@
 import { request } from '@playwright/test';
 
-const AUTH_EMULATOR = process.env.FIREBASE_AUTH_EMULATOR_HOST || 'localhost:9099';
+const AUTH_EMULATOR = process.env.FIREBASE_AUTH_EMULATOR_HOST || '127.0.0.1:9099';
 const PROJECT_ID = process.env.FIREBASE_PROJECT_ID || 'crew-predictions';
-const APP_URL = 'http://localhost:8080';
+const APP_URL = 'http://127.0.0.1:8080';
 
 export default async function globalSetup() {
   const ctx = await request.newContext();

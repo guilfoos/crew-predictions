@@ -3,7 +3,7 @@ package repository
 import (
 	"log"
 
-	"github.com/mcornell/crew-predictions/internal/models"
+	"github.com/guilfoos/crew-predictions/internal/models"
 )
 
 type writeThroughMatchStore struct {
