@@ -320,7 +320,7 @@ jobs:
         run: npx firebase deploy --only hosting --project subtle-canto-513501-i3 --config firebase.staging.json
 
       - name: Deploy Firestore rules + indexes to staging
-        run: npx firebase deploy --only firestore --project crew-predictions-staging --config firebase.staging.json
+        run: npx firebase deploy --only firestore --project subtle-canto-513501-i3 --config firebase.staging.json
 
       - name: Upload frontend to GCS
         run: |
