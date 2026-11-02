@@ -46,5 +46,5 @@ Then('I should see {string} in the staging header', async ({ page }, text: strin
 })
 
 Then('the page should navigate toward Google for authentication', async ({ page }) => {
-  await page.waitForURL(/accounts\.google\.com|crew-predictions-staging\.web\.app\/__\/auth\/handler/, { timeout: 10000 })
+  await page.waitForURL(/accounts\.google\.com|subtle-canto-513501-i3\.firebaseapp\.com\/__\/auth\/handler/, { timeout: 10000 })
 })
