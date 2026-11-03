@@ -543,7 +543,7 @@ jobs:
       - name: Run prod smoke tests
         run: npm run test:smoke:prod
         env:
-          PROD_URL: https://crew96predictions.fans
+          PROD_URL: https://www.crew96predictions.fans
 
       - name: Prod smoke test report
         uses: dorny/test-reporter@v3

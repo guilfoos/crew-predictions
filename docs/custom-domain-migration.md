@@ -21,10 +21,13 @@ This document outlines the steps to migrate from Firebase default domains to cus
 
 | Service | Target Domain | Routing |
 |---------|---------------|---------|
-| Frontend (Firebase Hosting) | `https://crew96predictions.fans` | Direct |
+| Frontend (Firebase Hosting) | `https://www.crew96predictions.fans` | Direct (canonical) |
+| Root Domain | `https://crew96predictions.fans` | 301 Redirect to www |
 | API (Cloud Run via Firebase) | `https://api.crew96predictions.fans` | Firebase → Cloud Run |
 
 **Note:** Cloud Run custom domain mapping is not available in all regions. Instead, we use Firebase Hosting rewrites to route `/api/**` paths to Cloud Run.
+
+**Why www is canonical:** Root domains (`crew96predictions.fans`) cannot use standard CNAME records. Using a 301 redirect from root to www is the most reliable approach across all DNS providers.
 
 ---
 
@@ -74,9 +77,9 @@ You need **Owner** or **Editor** role on the GCP project `crew-predictions-51090
    - Select project `crew-predictions-510902`
    - Click **Hosting** in the left sidebar
 
-2. **Add Custom Domain**
+2. **Add Custom Domain (www subdomain)**
    - Click **Add custom domain**
-   - Enter your domain (e.g., `crewpredictions.com`)
+   - Enter: `www.crew96predictions.fans`
    - Firebase will show required DNS records
 
 3. **Verify Domain Ownership**
@@ -88,23 +91,33 @@ You need **Owner** or **Editor** role on the GCP project `crew-predictions-51090
      TTL: 1 minute (Cloudflare: use "1" or "Automatic")
      ```
 
-4. **Configure DNS for Firebase Hosting**
+4. **Configure DNS for Firebase Hosting (www subdomain)**
    - Add CNAME record:
      ```
      Type: CNAME
-     Host: www (or @ for root domain)
-     Value: <your-project>.firebaseapp.com.
+     Host: www
+     Value: crew-predictions-510902.firebaseapp.com.
      TTL: 1 minute (Cloudflare: use "1" or "Automatic")
      ```
 
-5. **Wait for SSL Provisioning**
-   - Firebase automatically provisions Let's Encrypt SSL
+5. **Add Root Domain Redirect (Cloudflare)**
+   - Go to **Cloudflare → Pages → Page Rules**
+   - Create new rule:
+     - **URL pattern:** `crew96predictions.fans/*`
+     - **Setting:** **Forwarding URL**
+     - **Status code:** `301 - Permanent Redirect`
+     - **Destination:** `https://www.crew96predictions.fans/$1`
+   - Save the rule
+
+6. **Wait for SSL Provisioning**
+   - Firebase automatically provisions Let's Encrypt SSL for `www.crew96predictions.fans`
    - This typically takes 10-30 minutes
    - Can take up to 24 hours in rare cases
 
-6. **Verify Deployment**
-   - Visit `https://crewpredictions.com`
+7. **Verify Deployment**
+   - Visit `https://www.crew96predictions.fans`
    - Confirm site loads with valid SSL certificate
+   - Visit `https://crew96predictions.fans` and confirm it redirects to www
 
 ### Phase 3: Firebase Hosting API Rewrite
 
@@ -203,19 +216,22 @@ If something breaks:
 
 ## DNS Records Summary
 
-### For `crew96predictions.fans` (root domain)
+### DNS Records for `crew96predictions.fans`
 
 ```
+# Firebase domain verification (required for both www and api)
 Type: TXT
 Host: @
 Value: google-site-verification=<firebase-code>
 TTL: 1 minute (Cloudflare: "1" or "Automatic")
 
-Type: CNAME (or ALIAS/ANAME if supported)
+# www subdomain - points to Firebase Hosting
+Type: CNAME
 Host: www
 Value: crew-predictions-510902.firebaseapp.com.
 TTL: 1 minute (Cloudflare: "1" or "Automatic")
 
+# api subdomain - points to Firebase Hosting (routes to Cloud Run via rewrite)
 Type: CNAME
 Host: api
 Value: crew-predictions-510902.firebaseapp.com.
@@ -223,6 +239,8 @@ TTL: 1 minute (Cloudflare: "1" or "Automatic")
 ```
 
 **Note:** The `api` CNAME points to Firebase Hosting (not Cloud Run directly). Firebase routes `/api/**` paths to Cloud Run via rewrite rules.
+
+**Root domain handling:** Do NOT add a CNAME for the root domain (`@`). Instead, use a Cloudflare Page Rule to redirect `crew96predictions.fans/*` → `https://www.crew96predictions.fans/$1` (301 Permanent Redirect).
 
 **Note:** Cloud Run domain mapping may use a different verification method. Follow the exact instructions in Cloud Run Console.
 
@@ -243,11 +261,19 @@ TTL: 1 minute (Cloudflare: "1" or "Automatic")
 - Session cookies won't validate
 - Users will be stuck in auth loops
 
-### Subdomain vs Root Domain
+### Subdomain vs Root Domain (Recommended Approach)
 
-- **Root domain** (`crewpredictions.com`): Requires ALIAS/ANAME record (not all registrars support this)
-- **Subdomain** (`www.crewpredictions.com`): Standard CNAME record, works everywhere
-- **Recommendation:** Start with `www.crewpredictions.com`, then add root domain redirect
+**Recommended: www-first with root redirect**
+- **Canonical domain:** `www.crew96predictions.fans` (uses standard CNAME)
+- **Root domain:** `crew96predictions.fans` → 301 redirect to www
+- **Why:** CNAME records cannot be used at the root level. A 301 redirect is more reliable than ALIAS/ANAME records and works across all DNS providers.
+
+**Alternative: ALIAS/ANAME at root**
+- Some DNS providers (Cloudflare, DNSimple) support ALIAS/ANAME records at root
+- These act like CNAMEs but work at the root level
+- **Trade-off:** Slightly more complex DNS setup, may have slower resolution than CNAME
+
+**For this project:** We use the www-first approach with Cloudflare Page Rules for the root redirect.
 
 ### Cloud Run Domain Mapping
 
@@ -305,5 +331,5 @@ After migration:
 ---
 
 **Document Owner:** Brian (original author)
-**Last Updated:** 2026-11-02 (fork migration)
-**Status:** Ready to start — awaiting domain purchase
+**Last Updated:** 2026-11-03 (custom domain migration completed)
+**Status:** ✅ COMPLETED — Domain configured, DNS set up, SSL provisioning
