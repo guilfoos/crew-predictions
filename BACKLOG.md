@@ -14,6 +14,18 @@
   - All documentation updated to reflect new domain
   - See [docs/custom-domain-migration.md](docs/custom-domain-migration.md) for complete migration guide
 
+### App versioning
+
+- [ ] **Implement semantic versioning with UI display** — Add version tracking throughout the stack and display current version in the site footer.
+  - Add `package.json` version field as source of truth (semver: `MAJOR.MINOR.PATCH`)
+  - Expose version to frontend via `/auth/config.js` or dedicated `/api/version` endpoint
+  - Add version display in `AppFooter.vue` (e.g., "v1.0.0")
+  - CI/CD: Bump version on release tags, or auto-increment on develop pushes
+  - Go server: Read version from build-time variable (`-ldflags "-X main.version=v$VERSION"`)
+  - Consider GitHub Releases integration for changelog tracking
+  - **Effort:** Medium (~2-4 hours)
+  - **Trigger:** Before first public release
+
 ### NPM dependency cleanup
 
 - [ ] **Resolve npm install warnings** — Clean up deprecation warnings and peer dependency conflicts from `npm install`. Review warnings and update dependencies or add missing peer dependencies as needed. Low priority but keeps the project healthy.

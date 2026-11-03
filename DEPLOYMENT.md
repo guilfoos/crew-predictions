@@ -59,6 +59,192 @@ gcloud run deploy crew-predictions \
 
 ---
 
+## Match Polling Infrastructure (Cloud Scheduler + Cloud Tasks)
+
+The production environment uses Cloud Scheduler and Cloud Tasks to ensure live match polling continues even when the Cloud Run container is idle.
+
+### Prerequisites
+
+Enable the required APIs:
+```bash
+gcloud services enable cloudscheduler.googleapis.com --project=crew-predictions-510902
+gcloud services enable cloudtasks.googleapis.com --project=crew-predictions-510902
+```
+
+### Setup Steps
+
+1. **Create Cloud Tasks queue** (region `us-east4`):
+   ```bash
+   gcloud tasks queues create match-polling \
+     --project=crew-predictions-510902 \
+     --location=us-east4
+   ```
+
+2. **Grant Cloud Run service account permission** to enqueue tasks:
+   ```bash
+   RUNTIME_SA="525186631552-compute@developer.gserviceaccount.com"
+   gcloud projects add-iam-policy-binding crew-predictions-510902 \
+     --member="serviceAccount:$RUNTIME_SA" \
+     --role="roles/cloudtasks.enqueuer"
+   ```
+
+3. **Create Cloud Scheduler jobs** (3 daily refreshes):
+   ```bash
+   ADMIN_KEY=$(gcloud secrets versions access latest --secret=admin-key --project=crew-predictions-510902)
+   TARGET_URL="https://crew-predictions-510902.us-east5.run.app/admin/refresh-matches"
+   SERVICE_ACCOUNT="github-actions@crew-predictions-510902.iam.gserviceaccount.com"
+
+   # 4 AM ET
+   gcloud scheduler jobs create http refresh-4am \
+     --project=crew-predictions-510902 --location=us-east4 \
+     --schedule="0 4 * * *" --time-zone="America/New_York" \
+     --http-method=POST --uri="$TARGET_URL" \
+     --oidc-service-account-email="$SERVICE_ACCOUNT" \
+     --oidc-token-audience="$TARGET_URL" \
+     --headers="X-Admin-Key=$ADMIN_KEY"
+
+   # 12 PM ET
+   gcloud scheduler jobs create http refresh-noon \
+     --project=crew-predictions-510902 --location=us-east4 \
+     --schedule="0 12 * * *" --time-zone="America/New_York" \
+     --http-method=POST --uri="$TARGET_URL" \
+     --oidc-service-account-email="$SERVICE_ACCOUNT" \
+     --oidc-token-audience="$TARGET_URL" \
+     --headers="X-Admin-Key=$ADMIN_KEY"
+
+   # 6 PM ET
+   gcloud scheduler jobs create http refresh-6pm \
+     --project=crew-predictions-510902 --location=us-east4 \
+     --schedule="0 18 * * *" --time-zone="America/New_York" \
+     --http-method=POST --uri="$TARGET_URL" \
+     --oidc-service-account-email="$SERVICE_ACCOUNT" \
+     --oidc-token-audience="$TARGET_URL" \
+     --headers="X-Admin-Key=$ADMIN_KEY"
+   ```
+
+4. **Verify setup**:
+   ```bash
+   gcloud scheduler jobs list --project=crew-predictions-510902 --location=us-east4
+   gcloud tasks queues describe match-polling --project=crew-predictions-510902 --location=us-east4
+   ```
+
+### Troubleshooting
+
+- **No matches in Firestore**: Check Cloud Scheduler logs for failed refresh jobs
+- **403 Forbidden on `/admin/refresh-matches`**: Verify `ADMIN_KEY` secret matches
+- **No poller logs**: Check Cloud Tasks queue for pending tasks
+
+### Manual Testing
+
+To trigger a manual refresh (bypassing the schedule):
+
+```bash
+# Direct HTTP POST
+curl -X POST https://crew-predictions-510902.us-east5.run.app/admin/refresh-matches \
+  -H "X-Admin-Key: $(gcloud secrets versions access latest --secret=admin-key --project=crew-predictions-510902)"
+
+# Or run a scheduler job manually
+gcloud scheduler jobs run refresh-4am --project=crew-predictions-510902 --location=us-east4
+```
+
+---
+
+## Staging Environment Setup
+
+The staging environment (`subtle-canto-513501-i3`) requires the same Cloud Scheduler + Cloud Tasks infrastructure, but with a staging-specific service account.
+
+### Staging Service Account
+
+Create a staging-specific service account (the production `github-actions` SA cannot be used due to cross-project IAM restrictions):
+
+```bash
+# Create service account
+gcloud iam service-accounts create github-actions-staging \
+  --project=subtle-canto-513501-i3 \
+  --display-name="GitHub Actions Staging Deployer"
+
+# Grant roles on staging project
+PROJECT="subtle-canto-513501-i3"
+SA="github-actions-staging@subtle-canto-513501-i3.iam.gserviceaccount.com"
+
+gcloud projects add-iam-policy-binding "$PROJECT" \
+  --member="serviceAccount:$SA" \
+  --role="roles/cloudscheduler.admin" \
+  --condition=None
+
+gcloud projects add-iam-policy-binding "$PROJECT" \
+  --member="serviceAccount:$SA" \
+  --role="roles/cloudtasks.admin" \
+  --condition=None
+
+gcloud projects add-iam-policy-binding "$PROJECT" \
+  --member="serviceAccount:$SA" \
+  --role="roles/run.admin" \
+  --condition=None
+
+gcloud projects add-iam-policy-binding "$PROJECT" \
+  --member="serviceAccount:$SA" \
+  --role="roles/secretmanager.secretAccessor" \
+  --condition=None
+```
+
+### Staging Cloud Tasks Queue
+
+```bash
+gcloud tasks queues create match-polling \
+  --project=subtle-canto-513501-i3 \
+  --location=us-east4
+```
+
+### Staging Cloud Scheduler Jobs
+
+```bash
+STAGING_SA="github-actions-staging@subtle-canto-513501-i3.iam.gserviceaccount.com"
+STAGING_URL=$(gcloud run services describe crew-predictions-staging --project=subtle-canto-513501-i3 --region=us-east5 --format="value(status.url)")
+TARGET_URL="${STAGING_URL}/admin/refresh-matches"
+ADMIN_KEY=$(gcloud secrets versions access latest --secret=admin-key --project=subtle-canto-513501-i3)
+
+# 4 AM ET
+gcloud scheduler jobs create http refresh-4am \
+  --project=subtle-canto-513501-i3 --location=us-east4 \
+  --schedule="0 4 * * *" --time-zone="America/New_York" \
+  --http-method=POST --uri="$TARGET_URL" \
+  --oidc-service-account-email="$STAGING_SA" \
+  --oidc-token-audience="$TARGET_URL" \
+  --headers="X-Admin-Key=$ADMIN_KEY"
+
+# 12 PM ET
+gcloud scheduler jobs create http refresh-noon \
+  --project=subtle-canto-513501-i3 --location=us-east4 \
+  --schedule="0 12 * * *" --time-zone="America/New_York" \
+  --http-method=POST --uri="$TARGET_URL" \
+  --oidc-service-account-email="$STAGING_SA" \
+  --oidc-token-audience="$TARGET_URL" \
+  --headers="X-Admin-Key=$ADMIN_KEY"
+
+# 6 PM ET
+gcloud scheduler jobs create http refresh-6pm \
+  --project=subtle-canto-513501-i3 --location=us-east4 \
+  --schedule="0 18 * * *" --time-zone="America/New_York" \
+  --http-method=POST --uri="$TARGET_URL" \
+  --oidc-service-account-email="$STAGING_SA" \
+  --oidc-token-audience="$TARGET_URL" \
+  --headers="X-Admin-Key=$ADMIN_KEY"
+```
+
+### Staging Manual Testing
+
+```bash
+# Direct HTTP POST
+curl -X POST $(gcloud run services describe crew-predictions-staging --project=subtle-canto-513501-i3 --region=us-east5 --format="value(status.url)")/admin/refresh-matches \
+  -H "X-Admin-Key: $(gcloud secrets versions access latest --secret=admin-key --project=subtle-canto-513501-i3)"
+
+# Or run a scheduler job manually
+gcloud scheduler jobs run refresh-4am --project=subtle-canto-513501-i3 --location=us-east4
+```
+
+---
+
 ## Firebase Configuration Files
 
 The project uses three Firebase configuration files for different environments:
