@@ -19,12 +19,12 @@ This document outlines the steps to migrate from Firebase default domains to cus
 
 ## Target URLs (Post-Migration)
 
-| Service | Target Domain |
-|---------|---------------|
-| Frontend (Firebase Hosting) | `https://crewpredictions.com` (example) |
-| Backend (Cloud Run) | `https://api.crewpredictions.com` (example) |
+| Service | Target Domain | Routing |
+|---------|---------------|---------|
+| Frontend (Firebase Hosting) | `https://crew96predictions.fans` | Direct |
+| API (Cloud Run via Firebase) | `https://api.crew96predictions.fans` | Firebase → Cloud Run |
 
-**Note:** Replace with your actual domain name.
+**Note:** Cloud Run custom domain mapping is not available in all regions. Instead, we use Firebase Hosting rewrites to route `/api/**` paths to Cloud Run.
 
 ---
 
@@ -85,7 +85,7 @@ You need **Owner** or **Editor** role on the GCP project `crew-predictions-51090
      Type: TXT
      Host: @ (or leave blank)
      Value: google-site-verification=<code-from-firebase>
-     TTL: 3600
+     TTL: 1 minute (Cloudflare: use "1" or "Automatic")
      ```
 
 4. **Configure DNS for Firebase Hosting**
@@ -94,7 +94,7 @@ You need **Owner** or **Editor** role on the GCP project `crew-predictions-51090
      Type: CNAME
      Host: www (or @ for root domain)
      Value: <your-project>.firebaseapp.com.
-     TTL: 3600
+     TTL: 1 minute (Cloudflare: use "1" or "Automatic")
      ```
 
 5. **Wait for SSL Provisioning**
@@ -106,34 +106,37 @@ You need **Owner** or **Editor** role on the GCP project `crew-predictions-51090
    - Visit `https://crewpredictions.com`
    - Confirm site loads with valid SSL certificate
 
-### Phase 3: Cloud Run Custom Domain
+### Phase 3: Firebase Hosting API Rewrite
 
-1. **Navigate to Cloud Run Console**
-   - Go to [Cloud Run Console](https://console.cloud.google.com/run)
-   - Select project `crew-predictions-510902`
-   - Click **Manage domains**
+Instead of Cloud Run domain mapping (not available in all regions), use Firebase Hosting rewrites:
 
-2. **Add Custom Domain**
-   - Click **Add mapping**
-   - Select your Cloud Run service (`crew-predictions`)
-   - Enter subdomain (e.g., `api.crewpredictions.com`)
+1. **Add rewrite rule to `firebase.json`**:
+   ```json
+   {
+     "hosting": {
+       "rewrites": [
+         {
+           "source": "/api/**",
+           "run": {
+             "serviceId": "crew-predictions",
+             "region": "us-east5"
+           }
+         }
+       ]
+     }
+   }
+   ```
 
-3. **Verify Domain Ownership**
-   - Add TXT record to your DNS:
-     ```
-     Type: TXT
-     Host: api
-     Value: google-site-verification=<code-from-cloud-run>
-     TTL: 3600
-     ```
+2. **Deploy Firebase Hosting**:
+   ```bash
+   firebase deploy --only hosting
+   ```
 
-4. **Wait for SSL Provisioning**
-   - Cloud Run automatically provisions SSL
-   - Typically 10-30 minutes
+3. **Verify API routing**:
+   - Test: `curl https://api.crew96predictions.fans/api/matches`
+   - Should route to Cloud Run service automatically
 
-5. **Verify Deployment**
-   - Test API endpoint: `curl https://api.crewpredictions.com/api/matches`
-   - Confirm valid SSL certificate
+**Note:** The `api` subdomain uses the same CNAME as the main site — Firebase routes based on the path.
 
 ### Phase 4: Update Firebase Configuration
 
@@ -200,28 +203,26 @@ If something breaks:
 
 ## DNS Records Summary
 
-### For `crewpredictions.com` (root domain)
+### For `crew96predictions.fans` (root domain)
 
 ```
 Type: TXT
 Host: @
 Value: google-site-verification=<firebase-code>
-TTL: 3600
+TTL: 1 minute (Cloudflare: "1" or "Automatic")
 
 Type: CNAME (or ALIAS/ANAME if supported)
 Host: www
 Value: crew-predictions-510902.firebaseapp.com.
-TTL: 3600
-```
+TTL: 1 minute (Cloudflare: "1" or "Automatic")
 
-### For `api.crewpredictions.com`
-
-```
-Type: TXT
+Type: CNAME
 Host: api
-Value: google-site-verification=<cloud-run-code>
-TTL: 3600
+Value: crew-predictions-510902.firebaseapp.com.
+TTL: 1 minute (Cloudflare: "1" or "Automatic")
 ```
+
+**Note:** The `api` CNAME points to Firebase Hosting (not Cloud Run directly). Firebase routes `/api/**` paths to Cloud Run via rewrite rules.
 
 **Note:** Cloud Run domain mapping may use a different verification method. Follow the exact instructions in Cloud Run Console.
 

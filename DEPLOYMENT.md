@@ -14,7 +14,7 @@ Before deploying to production for the first time:
 - [ ] Firebase Auth test accounts created (see [Smoke Test Accounts](#smoke-test-accounts))
 - [ ] GCS bucket created for frontend artifacts
 - [ ] GitHub secrets configured (see [Environment Secrets](#environment-secrets))
-- [ ] `FIREBASE_AUTH_DOMAIN` set to `.firebaseapp.com` domain (see [Critical Configuration](#critical-configuration))
+- [ ] `FIREBASE_AUTH_DOMAIN` set to custom domain `crew96predictions.fans` (see [Critical Configuration](#critical-configuration))
 
 ---
 
@@ -22,14 +22,16 @@ Before deploying to production for the first time:
 
 ### Firebase Auth Domain
 
-**The `FIREBASE_AUTH_DOMAIN` environment variable must be the `.firebaseapp.com` domain, NOT the `.web.app` hosting domain.**
+**The `FIREBASE_AUTH_DOMAIN` environment variable must be set to the custom domain `crew96predictions.fans`.**
 
-| Environment | Correct Value | Wrong Value |
-|-------------|---------------|-------------|
-| Staging | `subtle-canto-513501-i3.firebaseapp.com` | `subtle-canto-513501-i3.web.app` |
-| Production | `crew-predictions-510902.firebaseapp.com` | `crew-predictions-510902.web.app` |
+| Environment | Correct Value |
+|-------------|---------------|
+| Staging | `subtle-canto-513501-i3.firebaseapp.com` (staging uses Firebase default domain) |
+| Production | `crew96predictions.fans` (custom domain) |
 
-**Why:** Firebase Auth validates session cookies and OAuth redirects against this domain. Using the `.web.app` domain will cause authentication loops where users are stuck on `/login` even after successful OAuth.
+**Why:** Firebase Auth validates session cookies and OAuth redirects against this domain. The custom domain must match exactly — using the old `.firebaseapp.com` domain or the `.web.app` domain will cause authentication loops where users are stuck on `/login` even after successful OAuth.
+
+**Historical note:** Earlier versions of this guide warned against using `*.firebaseapp.com` in favor of `*.web.app`. That guidance was reversed when we discovered `firebaseapp.com` actually works correctly while `web.app` caused issues in some browsers. We've now migrated to a custom domain (`crew96predictions.fans`) which avoids both pitfalls entirely.
 
 **Symptoms of wrong configuration:**
 - User clicks "Sign in with Google" → OAuth completes → redirects back to app → immediately redirects back to `/login`
@@ -159,9 +161,11 @@ This environment variable points to the Cloud Run service URL for background tas
 | Environment | Value |
 |-------------|-------|
 | Staging | `https://crew-predictions-staging-<hash>.a.run.app/admin/poll-scores` |
-| Production | `https://crew-predictions-<hash>.a.run.app/admin/poll-scores` |
+| Production | `https://api.crew96predictions.fans/admin/poll-scores` (custom domain) |
 
 **Important:** This must match the Cloud Run service for the **current environment**, not the other one. Wrong configuration causes background tasks to poll the wrong environment.
+
+**Note:** Production now uses the custom domain `api.crew96predictions.fans` which routes to Cloud Run via Firebase Hosting rewrites. Staging still uses the raw Cloud Run URL.
 
 **How to find your Cloud Run URL:**
 ```bash
@@ -178,10 +182,12 @@ gcloud run services describe crew-predictions --project=crew-predictions-510902 
 
 **Diagnosis:**
 1. Check `FIREBASE_AUTH_DOMAIN` environment variable
-2. Should be `.firebaseapp.com` domain, NOT `.web.app`
+2. Should be `crew96predictions.fans` for production (or staging's `.firebaseapp.com` domain)
 3. Clear browser cache and test again
 
 **Fix:** Update `FIREBASE_AUTH_DOMAIN` and redeploy
+
+**Note:** If you recently migrated to a custom domain, ensure the domain is also added to **Firebase Console → Authentication → Settings → Authorized domains**.
 
 ---
 

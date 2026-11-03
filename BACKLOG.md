@@ -2,13 +2,17 @@
 
 ## Up Next
 
-### Custom domain migration
+### Custom domain migration — COMPLETED ✅
 
-- [ ] **Purchase domain and configure DNS** — Move from `crew-predictions-510902.firebaseapp.com` to user-friendly custom domain (e.g., `crewpredictions.com`). Critical for user adoption before opening to end users.
+- [x] **Domain purchased and configured** — Migrated from `crew-predictions-510902.firebaseapp.com` to custom domain `crew96predictions.fans`.
+  - DNS configured in Cloudflare (CNAME records for `www` and `api` subdomains)
+  - Firebase Hosting custom domain added with SSL provisioning
+  - Firebase Hosting rewrite rules configured to route `/api/**` to Cloud Run
+  - GitHub Actions updated to use custom domain URLs
+  - `FIREBASE_AUTH_DOMAIN` set to `crew96predictions.fans`
+  - `CLOUD_TASKS_TARGET_URL` updated to `https://api.crew96predictions.fans/admin/poll-scores`
+  - All documentation updated to reflect new domain
   - See [docs/custom-domain-migration.md](docs/custom-domain-migration.md) for complete migration guide
-  - Estimated effort: ~1 hour active work + 24-48 hours DNS propagation
-  - Risk: Medium (auth domain change requires careful testing)
-  - Rollback: Revert DNS records + environment variables
 
 ### NPM dependency cleanup
 

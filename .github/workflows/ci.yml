@@ -475,7 +475,7 @@ jobs:
             --timeout=300 \
             --cpu-boost \
             --allow-unauthenticated \
-            --set-env-vars=FIREBASE_PROJECT_ID=crew-predictions-510902,FIREBASE_API_KEY=$PROD_API_KEY,FIREBASE_AUTH_DOMAIN=crew-predictions-510902.firebaseapp.com,GOOGLE_CLOUD_PROJECT=crew-predictions-510902,FIREBASE_MEASUREMENT_ID=G-XBSZ6HS46Y,FIREBASE_APP_ID=1:525186631552:web:86d72dc5cba46aac38a365,CLOUD_TASKS_PROJECT=crew-predictions-510902,CLOUD_TASKS_LOCATION=us-east4,CLOUD_TASKS_QUEUE=match-polling,CLOUD_TASKS_TARGET_URL=https://crew-predictions-vc3leuirrq-ul.a.run.app/admin/poll-scores \
+            --set-env-vars=FIREBASE_PROJECT_ID=crew-predictions-510902,FIREBASE_API_KEY=$PROD_API_KEY,FIREBASE_AUTH_DOMAIN=crew96predictions.fans,GOOGLE_CLOUD_PROJECT=crew-predictions-510902,FIREBASE_MEASUREMENT_ID=G-XBSZ6HS46Y,FIREBASE_APP_ID=1:525186631552:web:86d72dc5cba46aac38a365,CLOUD_TASKS_PROJECT=crew-predictions-510902,CLOUD_TASKS_LOCATION=us-east4,CLOUD_TASKS_QUEUE=match-polling,CLOUD_TASKS_TARGET_URL=https://api.crew96predictions.fans/admin/poll-scores \
             --update-secrets=ADMIN_KEY=admin-key:latest,SESSION_SECRET=session-secret:latest \
             --quiet
         env:
@@ -543,7 +543,7 @@ jobs:
       - name: Run prod smoke tests
         run: npm run test:smoke:prod
         env:
-          PROD_URL: https://crew-predictions-510902.firebaseapp.com
+          PROD_URL: https://crew96predictions.fans
 
       - name: Prod smoke test report
         uses: dorny/test-reporter@v3

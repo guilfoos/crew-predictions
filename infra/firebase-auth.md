@@ -19,8 +19,9 @@ Both projects must have these providers enabled, with identical settings:
 The Firebase Auth provider redirect flow only accepts callbacks from these domains. Any new domain (custom domain, preview channel, etc.) must be added explicitly.
 
 ### Production (`crew-predictions`)
-- `crew-predictions.web.app`
-- `crew-predictions.firebaseapp.com`
+- `crew96predictions.fans` (custom domain)
+- `api.crew96predictions.fans` (custom domain for API)
+- `crew-predictions.web.app` (Firebase default, still authorized)
 - `localhost` (for local dev only — leaving this enabled in prod is intentional)
 
 ### Staging (`crew-predictions-staging`)
@@ -40,7 +41,12 @@ If the OAuth client is ever regenerated:
 2. Update both projects' GCP OAuth consent screens to include any newly added authorized domains.
 3. Verify staging end-to-end (sign in via Google) before touching prod.
 
-The **`authDomain`** in the Firebase web SDK config (set via `FIREBASE_AUTH_DOMAIN` env var on Cloud Run) MUST be the `*.web.app` domain, not `*.firebaseapp.com`. We learned the hard way that `firebaseapp.com` causes Google sign-in failures in some browsers.
+The **`authDomain`** in the Firebase web SDK config (set via `FIREBASE_AUTH_DOMAIN` env var on Cloud Run) must match your deployed domain exactly:
+
+- **Production:** `crew96predictions.fans` (custom domain)
+- **Staging:** `subtle-canto-513501-i3.firebaseapp.com`
+
+**Historical note:** We previously learned that `*.firebaseapp.com` works correctly while `*.web.app` caused Google sign-in failures in some browsers. We've now migrated to a custom domain which avoids both pitfalls.
 
 ## Email templates
 

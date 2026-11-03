@@ -89,7 +89,12 @@ The smoke suite verifies that clicking "Sign in with Google" initiates the redir
 3. Confirm you land on `/matches` and your email appears in the header
 4. Repeat on mobile (iOS Safari and Android Chrome)
 
-**Critical:** If you see an auth loop (redirects back to `/login` after OAuth completes), check that `FIREBASE_AUTH_DOMAIN` is set to the `.firebaseapp.com` domain, NOT the `.web.app` domain. See [DEPLOYMENT.md - Firebase Auth Domain](DEPLOYMENT.md#firebase-auth-domain).
+**Critical:** If you see an auth loop (redirects back to `/login` after OAuth completes), check that `FIREBASE_AUTH_DOMAIN` is set correctly:
+- Production: Should be `crew96predictions.fans` (custom domain)
+- Staging: Should be `subtle-canto-513501-i3.firebaseapp.com`
+- NOT the `.web.app` domain
+
+See [DEPLOYMENT.md - Firebase Auth Domain](DEPLOYMENT.md#firebase-auth-domain) for details.
 
 ---
 

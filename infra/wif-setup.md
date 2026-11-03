@@ -6,7 +6,7 @@ This doc captures the WIF configuration so it can be re-created or audited witho
 
 **For complete deployment guidance including troubleshooting, see [DEPLOYMENT.md](../DEPLOYMENT.md).**
 
-**Critical:** Firebase Auth requires `FIREBASE_AUTH_DOMAIN` to be set to the `.firebaseapp.com` domain (e.g., `crew-predictions-510902.firebaseapp.com`), NOT the `.web.app` hosting domain. Wrong configuration causes authentication loops. See [DEPLOYMENT.md - Firebase Auth Domain](../DEPLOYMENT.md#firebase-auth-domain).
+**Critical:** The `FIREBASE_AUTH_DOMAIN` environment variable must be set to the custom domain `crew96predictions.fans` for production. Wrong configuration causes authentication loops. See [DEPLOYMENT.md - Firebase Auth Domain](../DEPLOYMENT.md#firebase-auth-domain).
 
 ## Service account
 
