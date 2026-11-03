@@ -468,7 +468,8 @@ jobs:
             --max-instances=20 \
             --timeout=300 \
             --cpu-boost \
-            --set-env-vars=FIREBASE_PROJECT_ID=crew-predictions-510902,FIREBASE_API_KEY=$PROD_API_KEY,FIREBASE_AUTH_DOMAIN=crew-predictions-510902.firebaseapp.com,GOOGLE_CLOUD_PROJECT=crew-predictions-510902,FIREBASE_MEASUREMENT_ID=G-XBSZ6HS46Y,FIREBASE_APP_ID=1:525186631552:web:86d72dc5cba46aac38a365,CLOUD_TASKS_PROJECT=crew-predictions-510902,CLOUD_TASKS_LOCATION=us-east4,CLOUD_TASKS_QUEUE=match-polling,CLOUD_TASKS_TARGET_URL=https://crew-predictions-3qbonlobra-ul.a.run.app/admin/poll-scores \
+            --allow-unauthenticated \
+            --set-env-vars=FIREBASE_PROJECT_ID=crew-predictions-510902,FIREBASE_API_KEY=$PROD_API_KEY,FIREBASE_AUTH_DOMAIN=crew-predictions-510902.firebaseapp.com,GOOGLE_CLOUD_PROJECT=crew-predictions-510902,FIREBASE_MEASUREMENT_ID=G-XBSZ6HS46Y,FIREBASE_APP_ID=1:525186631552:web:86d72dc5cba46aac38a365,CLOUD_TASKS_PROJECT=crew-predictions-510902,CLOUD_TASKS_LOCATION=us-east4,CLOUD_TASKS_QUEUE=match-polling,CLOUD_TASKS_TARGET_URL=https://crew-predictions-vc3leuirrq-ul.a.run.app/admin/poll-scores \
             --update-secrets=ADMIN_KEY=admin-key:latest,SESSION_SECRET=session-secret:latest \
             --quiet
         env:
