@@ -2,6 +2,18 @@
 
 ## Up Next
 
+### Custom domain migration
+
+- [ ] **Purchase domain and configure DNS** — Move from `crew-predictions-510902.firebaseapp.com` to user-friendly custom domain (e.g., `crewpredictions.com`). Critical for user adoption before opening to end users.
+  - See [docs/custom-domain-migration.md](docs/custom-domain-migration.md) for complete migration guide
+  - Estimated effort: ~1 hour active work + 24-48 hours DNS propagation
+  - Risk: Medium (auth domain change requires careful testing)
+  - Rollback: Revert DNS records + environment variables
+
+### NPM dependency cleanup
+
+- [ ] **Resolve npm install warnings** — Clean up deprecation warnings and peer dependency conflicts from `npm install`. Review warnings and update dependencies or add missing peer dependencies as needed. Low priority but keeps the project healthy.
+
 ### CI tool/action documentation audit
 
 - [x] **Walk every CI tool against current upstream documentation** and apply any simplifications / current-best-practice changes. Each item gets its own focused commit so failures isolate. Two findings already applied separately (Go cache simplification + Vitest `github-actions` reporter); the rest still need to be reviewed:
