@@ -1,4 +1,7 @@
 {
+  // Staging Firebase Hosting configuration.
+  // Uses "dist/" directory (Vite build output) with Cloud Run rewrites for API endpoints.
+  // See DEPLOYMENT.md for configuration differences between environments.
   "hosting": {
     "public": "dist",
     "versions": { "maxVersions": 5 },

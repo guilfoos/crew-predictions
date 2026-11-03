@@ -70,8 +70,12 @@ Open `http://localhost:5173`.
 go test ./...          # Go unit tests
 npm run test:unit      # Vue component tests (Vitest)
 npm test               # Full e2e suite (Playwright BDD, runs against local emulator)
-npm run test:smoke     # Staging smoke suite (runs against crew-predictions-staging.web.app)
+npm run test:smoke     # Staging smoke suite (requires test accounts in Firebase Auth)
 ```
+
+**Smoke test accounts:** Before running `npm run test:smoke`, create test accounts in Firebase Auth:
+- `smoke1@test.com` and `smoke2@test.com` with password from `SMOKE_TEST_PASSWORD` secret
+- See [DEPLOYMENT.md - Smoke Test Accounts](DEPLOYMENT.md#smoke-test-accounts) for details
 
 **Staging smoke suite** requires `STAGING_API_KEY` and `SMOKE_TEST_PASSWORD` env vars. In CI these are GitHub secrets. Locally:
 ```bash
@@ -79,11 +83,13 @@ STAGING_API_KEY=... SMOKE_TEST_PASSWORD=... npm run test:smoke
 ```
 
 **Google sign-in — manual verification required on staging:**
-The smoke suite verifies that clicking "Sign in with Google" initiates the redirect (page navigates to Google's OAuth flow). It cannot complete the full Google sign-in automatically because Google's OAuth consent screen blocks automated browsers. After any deploy that touches the auth flow, manually verify on `https://crew-predictions-staging.web.app`:
+The smoke suite verifies that clicking "Sign in with Google" initiates the redirect (page navigates to Google's OAuth flow). It cannot complete the full Google sign-in automatically because Google's OAuth consent screen blocks automated browsers. After any deploy that touches the auth flow, manually verify on your staging URL:
 1. Click "Sign in with Google" on desktop Chrome
 2. Complete the OAuth flow
 3. Confirm you land on `/matches` and your email appears in the header
 4. Repeat on mobile (iOS Safari and Android Chrome)
+
+**Critical:** If you see an auth loop (redirects back to `/login` after OAuth completes), check that `FIREBASE_AUTH_DOMAIN` is set to the `.firebaseapp.com` domain, NOT the `.web.app` domain. See [DEPLOYMENT.md - Firebase Auth Domain](DEPLOYMENT.md#firebase-auth-domain).
 
 ---
 
@@ -120,6 +126,8 @@ Both linters expect a clean tree before commit. The configs are tuned to skip no
 See [BACKLOG.md](BACKLOG.md) for what's done and what's next.
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) for how the pieces fit together.
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for deployment configuration, troubleshooting, and operational procedures.
 
 ---
 

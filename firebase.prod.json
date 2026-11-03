@@ -1,4 +1,8 @@
 {
+  // Production Firebase Hosting configuration.
+  // Uses "dist/" directory (Vite build output) with Cloud Run rewrites for API endpoints.
+  // DO NOT use firebase.json for production deploys - it points to "public/" (empty).
+  // See DEPLOYMENT.md for configuration differences.
   "hosting": {
     "public": "dist",
     "versions": { "maxVersions": 5 },

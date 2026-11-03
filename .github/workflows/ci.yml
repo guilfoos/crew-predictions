@@ -298,6 +298,9 @@ jobs:
 
       - name: Deploy to staging Cloud Run
         run: |
+          # --allow-unauthenticated is CRITICAL: Firebase Hosting rewrites proxy to
+          # Cloud Run without IAM credentials. Without this flag, all API requests
+          # return 403 Forbidden. See DEPLOYMENT.md for troubleshooting.
           gcloud run deploy crew-predictions-staging \
             --image=us-east5-docker.pkg.dev/crew-predictions-510902/crew-predictions/crew-predictions:sha-${{ github.sha }} \
             --project=subtle-canto-513501-i3 \
@@ -458,6 +461,9 @@ jobs:
 
       - name: Deploy to prod Cloud Run
         run: |
+          # --allow-unauthenticated is CRITICAL: Firebase Hosting rewrites proxy to
+          # Cloud Run without IAM credentials. Without this flag, all API requests
+          # return 403 Forbidden. See DEPLOYMENT.md for troubleshooting.
           gcloud run deploy crew-predictions \
             --image=${{ env.DEPLOY_IMAGE }} \
             --region=us-east5 \

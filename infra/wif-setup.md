@@ -2,7 +2,11 @@
 
 GitHub Actions authenticates to GCP without long-lived JSON service account keys via Workload Identity Federation (WIF). When a workflow runs, GitHub mints a short-lived OIDC token; GCP's WIF provider verifies the token's claims (specifically `repository == 'guilfoos/crew-predictions'`) and exchanges it for a Google access token bound to a service account.
 
-This doc captures the configuration so it can be re-created or audited without poking through three cloud consoles.
+This doc captures the WIF configuration so it can be re-created or audited without poking through cloud consoles.
+
+**For complete deployment guidance including troubleshooting, see [DEPLOYMENT.md](../DEPLOYMENT.md).**
+
+**Critical:** Firebase Auth requires `FIREBASE_AUTH_DOMAIN` to be set to the `.firebaseapp.com` domain (e.g., `crew-predictions-510902.firebaseapp.com`), NOT the `.web.app` hosting domain. Wrong configuration causes authentication loops. See [DEPLOYMENT.md - Firebase Auth Domain](../DEPLOYMENT.md#firebase-auth-domain).
 
 ## Service account
 
