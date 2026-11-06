@@ -34,12 +34,12 @@ func TestParseKickoff_InvalidReturnsError(t *testing.T) {
 	}
 }
 
-func TestUpcomingURL_ContainsStartDate(t *testing.T) {
+func TestUpcomingURL_ContainsDate(t *testing.T) {
 	from := time.Date(2026, 4, 19, 0, 0, 0, 0, time.UTC)
 	url := upcomingURL(espnBase, "usa.1", from)
 	// Start date is 2 days before `from` to catch delayed matches still indexed under original kickoff date.
-	if !strings.Contains(url, "20260417") {
-		t.Errorf("upcomingURL %q missing start date 20260417 (2 days before from)", url)
+	if !strings.Contains(url, from.Format("20060102")) {
+		t.Errorf("upcomingURL %q missing start date %s", url, from.Format("20060102"))
 	}
 }
 
@@ -48,14 +48,6 @@ func TestUpcomingURL_ContainsScoreboard(t *testing.T) {
 	url := upcomingURL(espnBase, "usa.1", from)
 	if !strings.Contains(url, "scoreboard") {
 		t.Errorf("upcomingURL %q not pointing at scoreboard endpoint", url)
-	}
-}
-
-func TestUpcomingURL_EndDate8DaysAhead(t *testing.T) {
-	from := time.Date(2026, 4, 19, 0, 0, 0, 0, time.UTC)
-	url := upcomingURL(espnBase, "usa.1", from)
-	if !strings.Contains(url, "20260427") {
-		t.Errorf("upcomingURL %q missing end date 8 days ahead (20260427)", url)
 	}
 }
 

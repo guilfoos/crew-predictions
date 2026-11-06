@@ -11,7 +11,13 @@ See also: [ARCHITECTURE.md](ARCHITECTURE.md) for system design, [BACKLOG.md](BAC
 
 **When the user sends a message mid-task — feedback, a question, a correction — stop all tool use immediately and respond in text only. Do not resume running tools until the user explicitly signals to continue (e.g. "continue", "go ahead", "yes"). The BDD loop steps, TDD cycle, and any other workflow descriptions do not override this: they describe what to do, not permission to ignore the user.**
 
-**Never execute any `git` command. Instead, provide the user with the commands to run and let them do it** This rule has been violated repeatedly and trust has been lost because of it. No exceptions — not for "small" changes, not for docs, not for anything.
+# Git
+Commit per logical change. Not per file, not per session.
+Commit message format: <type>(<scope>): <summary>
+Types: feat | fix | refactor | test | chore
+Do not commit. Do not push. Do not open PRs. Prepare only; I'll review. I'll execute
+
+**We always work in the `develop` branch** No direct edits to main, no pushes to main. Everything must go to develop to be staged and tested, and the production changes come from a PR in github that pulls those updates into main.
 
 **We always work in the `develop` branch** No direct edits to main, no pushes to main. Everything must go to develop to be staged and tested, and the production changes come from a PR in github that pulls those updates into main.
 

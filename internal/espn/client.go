@@ -125,15 +125,10 @@ func scheduleURL(base, league string) string {
 }
 
 func upcomingURL(base, league string, from time.Time) string {
-	// Start 2 days back so delayed/rescheduled matches aren't dropped when
-	// ESPN still indexes them under their original kickoff date.
-	start := from.AddDate(0, 0, -2)
-	end := from.AddDate(0, 0, 8)
 	return fmt.Sprintf(
-		"%s/%s/scoreboard?dates=%s-%s&limit=500",
+		"%s/%s/scoreboard?dates=%s&limit=500",
 		base, league,
-		start.Format("20060102"),
-		end.Format("20060102"),
+		from.Format("20060102"),
 	)
 }
 
@@ -233,13 +228,22 @@ func fetchCrewMatchesFrom(base string) ([]models.Match, error) {
 			}
 		}
 
-		upcoming, err := fetchAndParse(upcomingURL(base, league, now))
-		if err != nil {
-			return nil, fmt.Errorf("espn scoreboard fetch (%s): %w", league, err)
-		}
-		for _, r := range upcoming {
-			if isCrewMatch(r) {
-				all = append(all, r)
+		// ESPN changed their API to no longer accept date ranges, so we have to
+		// loop on our end to poll each day
+		// Start 2 days back so delayed/rescheduled matches aren't dropped when
+		// ESPN still indexes them under their original kickoff date.
+		start := now.AddDate(0, 0, -2)
+		end := now.AddDate(0, 0, 8)
+
+		for d := start; d.Before(end); d = d.AddDate(0, 0, 1) {
+			upcoming, err := fetchAndParse(upcomingURL(base, league, d))
+			if err != nil {
+				return nil, fmt.Errorf("espn scoreboard fetch (%s): %w", league, err)
+			}
+			for _, r := range upcoming {
+				if isCrewMatch(r) {
+					all = append(all, r)
+				}
 			}
 		}
 	}
