@@ -19,6 +19,8 @@ Do not commit. Do not push. Do not open PRs. Prepare only; I'll review. I'll exe
 
 **We always work in the `develop` branch** No direct edits to main, no pushes to main. Everything must go to develop to be staged and tested, and the production changes come from a PR in github that pulls those updates into main.
 
+**We always work in the `develop` branch** No direct edits to main, no pushes to main. Everything must go to develop to be staged and tested, and the production changes come from a PR in github that pulls those updates into main.
+
 **Never write production code without a failing test first.** Full BDD loop detail in [e2e/CLAUDE.md](e2e/CLAUDE.md).
 
 This rule has been violated repeatedly. The specific failure pattern: new UI behavior (e.g. "Now Playing" section) gets implemented by changing frontend filtering logic without first writing a failing e2e scenario. The result is the feature ships with zero e2e coverage AND the filtering change breaks 18 existing tests. Both outcomes happened in the same session. The user was angry.
