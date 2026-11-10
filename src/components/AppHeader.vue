@@ -3,7 +3,10 @@
     <a
       class="brand"
       href="/"
-    >Crew Predictions</a>
+    >
+      <span class="brand-memorial">⚫</span>
+      Crew Predictions
+    </a>
     <nav class="site-nav">
       <a
         class="btn-ghost"
